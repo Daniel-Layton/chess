@@ -34,4 +34,20 @@ public class ChessPosition {
     public String toString(){
         return String.format("[%d,%d]", row, col);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        ChessPosition other = (ChessPosition) obj;
+        if (other.row != this.row) {
+//            System.out.println("Not Equal, row => " + this.toString() + " & " + other.toString());
+            return false;
+        }
+        if (other.col != this.col){
+//            System.out.println("Not Equal, col => " + this.toString() + " & " + other.toString());
+            return false;
+        }
+//        System.out.println("Equal => " + this.toString() + " & " + other.toString());
+        return true;
+    }
+
 }

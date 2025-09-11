@@ -46,4 +46,23 @@ public class ChessMove {
     public String toString() {
         return String.format("%s%s", startPosition, endPosition);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ChessMove other)) return false;
+        if (!other.startPosition.equals(startPosition)) {
+//            System.out.println("Not Equal, startPosition => " + this.toString() + " & " + other.toString());
+            return false;
+        }
+        if (!other.endPosition.equals(endPosition)){
+//            System.out.println("Not Equal, endPosition => " + this.toString() + " & " + other.toString());
+            return false;
+        }
+        if (other.promotionPiece != null && !other.promotionPiece.equals(promotionPiece)){
+//            System.out.println("Not Equal, promotionPiece => " + this.toString() + " & " + other.toString());
+            return false;
+        }
+//        System.out.println("Equal => " + this.toString() + " & " + other.toString());
+        return true;
+    }
 }
