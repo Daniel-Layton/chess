@@ -54,7 +54,7 @@ public class ChessMove {
 //            System.out.println("Not Equal, startPosition => " + this.toString() + " & " + other.toString());
             return false;
         }
-        if (!other.endPosition.equals(endPosition)){
+        if (!other.endPosition.equals(endPosition)) {
 //            System.out.println("Not Equal, endPosition => " + this.toString() + " & " + other.toString());
             return false;
         }
