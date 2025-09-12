@@ -20,11 +20,56 @@ public class ChessPiece {
     }
 
     public Collection<ChessMove> WhitePawnMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int rowStart = myPosition.getRow();
+        int colStart = myPosition.getColumn();
+        if (rowStart < 8 && board.getPiece(new ChessPosition(rowStart+1, colStart)) == null) { // if square ahead is blank
+            if (rowStart == 7) moves.addAll(Promotion(myPosition, new ChessPosition(rowStart+1, colStart)));
+            else moves.add(new ChessMove(myPosition, new ChessPosition(rowStart+1, colStart), null));
+            if (rowStart == 2 && board.getPiece(new ChessPosition(rowStart+2, colStart)) == null) moves.add(new ChessMove(myPosition, new ChessPosition(rowStart+2, colStart), null));
+        }
+        if (rowStart < 8 && colStart < 8 && board.getPiece(new ChessPosition(rowStart+1, colStart+1)) != null && board.getPiece(new ChessPosition(rowStart+1, colStart+1)).getTeamColor() != this.pieceColor) {
+            if (rowStart == 7) moves.addAll(Promotion(myPosition, new ChessPosition(rowStart+1, colStart+1)));
+            else moves.add(new ChessMove(myPosition, new ChessPosition(rowStart+1, colStart+1), null));
+        }
+
+        if (rowStart < 8 && colStart > 1 && board.getPiece(new ChessPosition(rowStart+1, colStart-1)) != null && board.getPiece(new ChessPosition(rowStart+1, colStart-1)).getTeamColor() != this.pieceColor) {
+            if (rowStart == 7) moves.addAll(Promotion(myPosition, new ChessPosition(rowStart+1, colStart-1)));
+            else moves.add(new ChessMove(myPosition, new ChessPosition(rowStart+1, colStart-1), null));
+        }
+
+        return moves;
     }
 
     public Collection<ChessMove> BlackPawnMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        int rowStart = myPosition.getRow();
+        int colStart = myPosition.getColumn();
+        if (rowStart > 1 && board.getPiece(new ChessPosition(rowStart-1, colStart)) == null) { // if square ahead is blank
+            if (rowStart == 2) moves.addAll(Promotion(myPosition, new ChessPosition(rowStart-1, colStart)));
+            else moves.add(new ChessMove(myPosition, new ChessPosition(rowStart-1, colStart), null));
+            if (rowStart == 7 && board.getPiece(new ChessPosition(rowStart-2, colStart)) == null) moves.add(new ChessMove(myPosition, new ChessPosition(rowStart-2, colStart), null));
+        }
+        if (rowStart > 1 && colStart < 8 && board.getPiece(new ChessPosition(rowStart-1, colStart+1)) != null && board.getPiece(new ChessPosition(rowStart-1, colStart+1)).getTeamColor() != this.pieceColor) {
+            if (rowStart == 2) moves.addAll(Promotion(myPosition, new ChessPosition(rowStart-1, colStart+1)));
+            else moves.add(new ChessMove(myPosition, new ChessPosition(rowStart-1, colStart+1), null));
+        }
+
+        if (rowStart > 1 && colStart > 1 && board.getPiece(new ChessPosition(rowStart-1, colStart-1)) != null && board.getPiece(new ChessPosition(rowStart-1, colStart-1)).getTeamColor() != this.pieceColor) {
+            if (rowStart == 2) moves.addAll(Promotion(myPosition, new ChessPosition(rowStart-1, colStart-1)));
+            else moves.add(new ChessMove(myPosition, new ChessPosition(rowStart-1, colStart-1), null));
+        }
+
+        return moves;
+    }
+
+    private Collection<ChessMove> Promotion(ChessPosition myPos, ChessPosition newPos) {
+        Collection<ChessMove> moves = new ArrayList<ChessMove>();
+        moves.add(new ChessMove(myPos, newPos, PieceType.QUEEN));
+        moves.add(new ChessMove(myPos, newPos, PieceType.BISHOP));
+        moves.add(new ChessMove(myPos, newPos, PieceType.KNIGHT));
+        moves.add(new ChessMove(myPos, newPos, PieceType.ROOK));
+        return moves;
     }
 
     public Collection<ChessMove> RookMoves(ChessBoard board, ChessPosition myPosition) {
