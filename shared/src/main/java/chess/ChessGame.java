@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -98,11 +99,16 @@ public class ChessGame {
                 if (gameBoard.getPiece(square) != null) {
                     if (gameBoard.getPiece(square).getTeamColor() != teamColor) { // if piece is an enemy
                         enemyMoves.addAll(gameBoard.getPiece(square).pieceMoves(gameBoard, square));
-                        for
+                        Iterator<ChessMove> moveItr = enemyMoves.iterator();
+                        while (moveItr.hasNext()) {
+                            ChessMove moveToCheck = moveItr.next();
+                            System.out.println(moveToCheck.getEndPosition());
+                        }
                     }
                 }
             }
         }
+        return true;
     }
 
     /**
