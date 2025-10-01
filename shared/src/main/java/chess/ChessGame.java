@@ -98,16 +98,7 @@ public class ChessGame {
                 if (gameBoard.getPiece(square) != null) {
                     if (gameBoard.getPiece(square).getTeamColor() != teamColor) { // if piece is an enemy
                         enemyMoves.addAll(gameBoard.getPiece(square).pieceMoves(gameBoard, square));
-                    }
-                }
-            }
-        }
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                ChessPosition square = new ChessPosition(i, j);
-                if (gameBoard.getPiece(square) != null) {
-                    if (gameBoard.getPiece(square).getTeamColor() == teamColor && gameBoard.getPiece(square).getPieceType() == ChessPiece.PieceType.KING) { // if piece is own king
-                        if
+                        for
                     }
                 }
             }
