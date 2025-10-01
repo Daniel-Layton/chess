@@ -102,13 +102,18 @@ public class ChessGame {
                         Iterator<ChessMove> moveItr = enemyMoves.iterator();
                         while (moveItr.hasNext()) {
                             ChessMove moveToCheck = moveItr.next();
-                            System.out.println(moveToCheck.getEndPosition());
+                            ChessPosition spot = moveToCheck.getEndPosition();
+                            if (gameBoard.getPiece(spot) != null) {
+                                if (gameBoard.getPiece(spot).getPieceType() == ChessPiece.PieceType.KING && gameBoard.getPiece(spot).getTeamColor() == teamColor) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        return true;
+        return false;
     }
 
     /**
