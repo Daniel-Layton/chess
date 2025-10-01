@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -17,18 +18,19 @@ public class ChessGame {
         this.teamTurn = ChessGame.TeamColor.WHITE;
         this.gameBoard = new ChessBoard();
         gameBoard.resetBoard();
+    }
 
-        System.out.println("Created board!");
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ChessGame chessGame)) {
+            return false;
+        }
+        return getTeamTurn() == chessGame.getTeamTurn() && Objects.equals(gameBoard, chessGame.gameBoard);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+        return Objects.hash(getTeamTurn(), gameBoard);
     }
 
     /**
@@ -73,9 +75,12 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        //add proper logic
-
-        throw new InvalidMoveException("Not implemented");
+                                                                        //add proper logic
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        ChessPiece movingPiece = gameBoard.getPiece(start);
+        gameBoard.addPiece(end, movingPiece);                           // add pawn logic
+        //throw new InvalidMoveException("Not implemented");
     }
 
     /**
