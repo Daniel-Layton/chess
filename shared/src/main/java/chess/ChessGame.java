@@ -85,9 +85,10 @@ public class ChessGame {
         while (moveItr.hasNext()) {
             ChessMove potentialMove = moveItr.next();
             ChessGame boardCheck = new ChessGame(pieceColor, gameBoard);
+            System.out.println("");
+            System.out.println(potentialMove);
             boardCheck.testMove(potentialMove);
             if (!boardCheck.isInCheck(pieceColor)) {
-                System.out.println(potentialMove);
                 possibleMoves.add(potentialMove);
             }
         }
@@ -115,7 +116,9 @@ public class ChessGame {
         ChessPosition end = move.getEndPosition();
         ChessPiece movingPiece = gameBoard.getPiece(start);
         gameBoard.removePiece(start);
+        System.out.println(gameBoard.getPiece(start));
         gameBoard.addPiece(end, movingPiece);
+        System.out.println(gameBoard.getPiece(end));
     }
 
     /**
@@ -140,6 +143,7 @@ public class ChessGame {
                             if (gameBoard.getPiece(spot) != null) {
                                 if (gameBoard.getPiece(spot).getPieceType() == ChessPiece.PieceType.KING && gameBoard.getPiece(spot).getTeamColor() == teamColor) {
                                     System.out.println("check!");
+                                    System.out.println(moveToCheck);
                                     return true;
                                 }
                             }
