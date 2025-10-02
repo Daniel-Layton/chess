@@ -37,6 +37,10 @@ public class ChessBoard {
         return squares[position.getRow() - 1][position.getColumn() - 1];
     }
 
+    public void removePiece(ChessPosition position) {
+        squares[position.getRow()-1][position.getColumn()-1] = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ChessBoard that)) {

@@ -105,6 +105,7 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece movingPiece = gameBoard.getPiece(start);
+        gameBoard.removePiece(start);
         gameBoard.addPiece(end, movingPiece);                           // add pawn logic
         //throw new InvalidMoveException("Not implemented");
     }
@@ -113,6 +114,7 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece movingPiece = gameBoard.getPiece(start);
+        gameBoard.removePiece(start);
         gameBoard.addPiece(end, movingPiece);
     }
 
@@ -124,6 +126,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         Collection<ChessMove> enemyMoves = new ArrayList<>();
+        System.out.println("checking...");
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition square = new ChessPosition(i, j);
@@ -143,9 +146,9 @@ public class ChessGame {
                         }
                     }
                 }
-                enemyMoves.clear();
             }
         }
+        System.out.println(enemyMoves);
         return false;
     }
 
