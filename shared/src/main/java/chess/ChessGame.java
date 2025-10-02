@@ -84,7 +84,8 @@ public class ChessGame {
         Iterator<ChessMove> moveItr = moves.iterator();
         while (moveItr.hasNext()) {
             ChessMove potentialMove = moveItr.next();
-            ChessGame boardCheck = new ChessGame(pieceColor, gameBoard);
+            ChessBoard newBoard = gameBoard.clone();
+            ChessGame boardCheck = new ChessGame(pieceColor, newBoard);
             System.out.println("");
             System.out.println(potentialMove);
             boardCheck.testMove(potentialMove);
