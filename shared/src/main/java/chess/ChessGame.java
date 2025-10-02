@@ -83,7 +83,8 @@ public class ChessGame {
         Iterator<ChessMove> moveItr = moves.iterator();
         while (moveItr.hasNext()) {
             ChessMove potentialMove = moveItr.next();
-            if
+            ChessGame boardCheck = new ChessGame(pieceColor, gameBoard);
+            boardCheck.makeMove(potentialMove);
         }
     }
 
