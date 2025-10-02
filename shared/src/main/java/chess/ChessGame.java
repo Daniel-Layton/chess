@@ -85,7 +85,10 @@ public class ChessGame {
             ChessMove potentialMove = moveItr.next();
             ChessGame boardCheck = new ChessGame(pieceColor, gameBoard);
             boardCheck.testMove(potentialMove);
-            if (!boardCheck.isInCheck(pieceColor)) possibleMoves.add(potentialMove);
+            if (!boardCheck.isInCheck(pieceColor)) {
+                System.out.println(potentialMove);
+                possibleMoves.add(potentialMove);
+            }
         }
         return possibleMoves;
     }
