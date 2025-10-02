@@ -77,9 +77,10 @@ public class ChessGame {
         }
         ChessPiece pieceToCheck = gameBoard.getPiece(startPosition);
         ChessGame.TeamColor pieceColor = gameBoard.getPiece(startPosition).getTeamColor();
-        Collection<ChessMove> moves = new ArrayList<ChessMove>();
-        Collection<ChessMove> possibleMoves = new ArrayList<ChessMove>();
+        Collection<ChessMove> moves = new ArrayList<>();
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
         moves.addAll(pieceToCheck.pieceMoves(gameBoard, startPosition));
+
         Iterator<ChessMove> moveItr = moves.iterator();
         while (moveItr.hasNext()) {
             ChessMove potentialMove = moveItr.next();
@@ -122,7 +123,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        Collection<ChessMove> enemyMoves = new ArrayList<ChessMove>();
+        Collection<ChessMove> enemyMoves = new ArrayList<>();
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition square = new ChessPosition(i, j);
@@ -135,6 +136,7 @@ public class ChessGame {
                             ChessPosition spot = moveToCheck.getEndPosition();
                             if (gameBoard.getPiece(spot) != null) {
                                 if (gameBoard.getPiece(spot).getPieceType() == ChessPiece.PieceType.KING && gameBoard.getPiece(spot).getTeamColor() == teamColor) {
+                                    System.out.println("check!");
                                     return true;
                                 }
                             }
