@@ -84,8 +84,10 @@ public class ChessGame {
         while (moveItr.hasNext()) {
             ChessMove potentialMove = moveItr.next();
             ChessGame boardCheck = new ChessGame(pieceColor, gameBoard);
-            boardCheck.makeMove(potentialMove);
+            boardCheck.testMove(potentialMove);
+            if (!boardCheck.isInCheck(pieceColor)) possibleMoves.add(potentialMove);
         }
+        return possibleMoves;
     }
 
     /**
@@ -101,6 +103,13 @@ public class ChessGame {
         ChessPiece movingPiece = gameBoard.getPiece(start);
         gameBoard.addPiece(end, movingPiece);                           // add pawn logic
         //throw new InvalidMoveException("Not implemented");
+    }
+
+    public void testMove(ChessMove move) {
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        ChessPiece movingPiece = gameBoard.getPiece(start);
+        gameBoard.addPiece(end, movingPiece);
     }
 
     /**
