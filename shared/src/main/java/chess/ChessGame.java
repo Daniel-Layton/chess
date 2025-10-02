@@ -22,6 +22,11 @@ public class ChessGame {
         gameBoard.resetBoard();
     }
 
+    public ChessGame(ChessGame.TeamColor Turn, ChessBoard Board) {
+        this.teamTurn = Turn;
+        this.gameBoard = Board;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ChessGame chessGame)) {
@@ -74,7 +79,12 @@ public class ChessGame {
         ChessGame.TeamColor pieceColor = gameBoard.getPiece(startPosition).getTeamColor();
         Collection<ChessMove> moves = new ArrayList<ChessMove>();
         Collection<ChessMove> possibleMoves = new ArrayList<ChessMove>();
-        moves.addAll(ChessPiece.pieceMoves(gameBoard, startPosition));
+        moves.addAll(pieceToCheck.pieceMoves(gameBoard, startPosition));
+        Iterator<ChessMove> moveItr = moves.iterator();
+        while (moveItr.hasNext()) {
+            ChessMove potentialMove = moveItr.next();
+            if
+        }
     }
 
     /**
