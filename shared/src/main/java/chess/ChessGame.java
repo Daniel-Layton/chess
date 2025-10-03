@@ -106,6 +106,7 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece movingPiece = gameBoard.getPiece(start);
+        if (movingPiece.getTeamColor() != teamTurn) throw new InvalidMoveException("incorrect team turn");
         ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
         Collection<ChessMove> validMoveList = new ArrayList<>();
         validMoveList = validMoves(start);
