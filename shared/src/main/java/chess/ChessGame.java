@@ -194,7 +194,24 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition maybeKingSquare = new ChessPosition(i, j);
+                ChessPiece maybeKing = gameBoard.getPiece(maybeKingSquare);
+                if (maybeKing != null) {
+                    if (maybeKing.getTeamColor() == teamColor && maybeKing.getPieceType() == ChessPiece.PieceType.KING) {
+                        //maybeKing is the correct king
+                        if (validMoves(maybeKingSquare).isEmpty() && isInCheck(teamColor)) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        throw new RuntimeException("king not found");
     }
 
     /**
@@ -205,7 +222,24 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition maybeKingSquare = new ChessPosition(i, j);
+                ChessPiece maybeKing = gameBoard.getPiece(maybeKingSquare);
+                if (maybeKing != null) {
+                    if (maybeKing.getTeamColor() == teamColor && maybeKing.getPieceType() == ChessPiece.PieceType.KING) {
+                        //maybeKing is the correct king
+                        if (validMoves(maybeKingSquare).isEmpty() && !isInCheck(teamColor)) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        throw new RuntimeException("king not found");
     }
 
     /**
