@@ -103,22 +103,24 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-                                                                        //add proper logic
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece movingPiece = gameBoard.getPiece(start);
         ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
         Collection<ChessMove> validMoveList = new ArrayList<>();
         validMoveList = validMoves(start);
+        System.out.println(validMoveList);
+        System.out.println(move);
         Iterator<ChessMove> validItr = validMoveList.iterator();
         boolean canMakeMove = false;
         while (validItr.hasNext()) {
             ChessMove possibleMove = validItr.next();
-            if (possibleMove.getEndPosition() == end && possibleMove.getPromotionPiece() == promotionPiece) {
+            if (possibleMove.equals(move)) {
                 canMakeMove = true;
                 break;
             }
         }
+        System.out.println(canMakeMove);
         if (canMakeMove) {
             gameBoard.removePiece(start);
             if (promotionPiece == null) {
