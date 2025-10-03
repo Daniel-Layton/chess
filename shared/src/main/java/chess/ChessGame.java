@@ -194,24 +194,22 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        Collection<ChessMove> teamMoves = new ArrayList<>();
+        //System.out.println("checking...");
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                ChessPosition maybeKingSquare = new ChessPosition(i, j);
-                ChessPiece maybeKing = gameBoard.getPiece(maybeKingSquare);
-                if (maybeKing != null) {
-                    if (maybeKing.getTeamColor() == teamColor && maybeKing.getPieceType() == ChessPiece.PieceType.KING) {
-                        //maybeKing is the correct king
-                        if (validMoves(maybeKingSquare).isEmpty() && isInCheck(teamColor)) {
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
+                ChessPosition square = new ChessPosition(i, j);
+                if (gameBoard.getPiece(square) != null) {
+                    if (gameBoard.getPiece(square).getTeamColor() == teamColor) { // if piece is on team
+                        teamMoves.addAll(validMoves(square));
                     }
                 }
             }
         }
-        throw new RuntimeException("king not found");
+        if (teamMoves.isEmpty() && isInCheck(teamColor)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -222,24 +220,22 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        Collection<ChessMove> teamMoves = new ArrayList<>();
+        //System.out.println("checking...");
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                ChessPosition maybeKingSquare = new ChessPosition(i, j);
-                ChessPiece maybeKing = gameBoard.getPiece(maybeKingSquare);
-                if (maybeKing != null) {
-                    if (maybeKing.getTeamColor() == teamColor && maybeKing.getPieceType() == ChessPiece.PieceType.KING) {
-                        //maybeKing is the correct king
-                        if (validMoves(maybeKingSquare).isEmpty() && !isInCheck(teamColor)) {
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
+                ChessPosition square = new ChessPosition(i, j);
+                if (gameBoard.getPiece(square) != null) {
+                    if (gameBoard.getPiece(square).getTeamColor() == teamColor) { // if piece is on team
+                        teamMoves.addAll(validMoves(square));
                     }
                 }
             }
         }
-        throw new RuntimeException("king not found");
+        if (teamMoves.isEmpty() && !isInCheck(teamColor)) {
+            return true;
+        }
+        return false;
     }
 
     /**
