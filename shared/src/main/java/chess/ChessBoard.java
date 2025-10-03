@@ -9,11 +9,23 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard implements Cloneable {
+public class ChessBoard {
 
     ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard() {
-        
+
+    }
+
+    public ChessBoard(ChessBoard source) {
+        // ChessPiece[][] squares = new ChessPiece[8][8];
+        //System.out.println("copying board...");
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                //System.out.println(source.getPiece(new ChessPosition(i+1, j+1)));
+                squares[i][j] = source.getPiece(new ChessPosition(i+1, j+1));
+            }
+        }
+        //System.out.println("board copied.");
     }
 
     /**
@@ -52,24 +64,6 @@ public class ChessBoard implements Cloneable {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
-    }
-
-    @Override
-    protected ChessBoard clone() { throws CloneNotSupportedException
-        ChessBoard clonedBoard = (ChessBoard) super.clone();
-        clonedBoard.squares = new ChessPiece[8][8];
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                ChessPiece originalPiece = this.squares[i][j];
-                if (originalPiece != null) {
-                    clonedBoard.squares[i][j] = originalPiece;
-                } else {
-                    clonedBoard.squares[i][j] = null;
-                }
-            }
-        }
-        return clonedBoard;
     }
 
     public void clearBoard() {

@@ -84,10 +84,10 @@ public class ChessGame {
         Iterator<ChessMove> moveItr = moves.iterator();
         while (moveItr.hasNext()) {
             ChessMove potentialMove = moveItr.next();
-            ChessBoard newBoard = gameBoard.clone();
+            ChessBoard newBoard = new ChessBoard(gameBoard);
             ChessGame boardCheck = new ChessGame(pieceColor, newBoard);
-            System.out.println("");
-            System.out.println(potentialMove);
+            //System.out.println("");
+            //System.out.println(potentialMove);
             boardCheck.testMove(potentialMove);
             if (!boardCheck.isInCheck(pieceColor)) {
                 possibleMoves.add(potentialMove);
@@ -116,10 +116,14 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece movingPiece = gameBoard.getPiece(start);
+        //System.out.println("moving...");
+        //System.out.println(gameBoard.getPiece(start));
         gameBoard.removePiece(start);
-        System.out.println(gameBoard.getPiece(start));
+        //System.out.println(gameBoard.getPiece(start));
+        //System.out.println(gameBoard.getPiece(end));
         gameBoard.addPiece(end, movingPiece);
-        System.out.println(gameBoard.getPiece(end));
+        //System.out.println(gameBoard.getPiece(end));
+        //System.out.println("end move.");
     }
 
     /**
@@ -130,7 +134,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         Collection<ChessMove> enemyMoves = new ArrayList<>();
-        System.out.println("checking...");
+        //System.out.println("checking...");
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition square = new ChessPosition(i, j);
@@ -143,8 +147,8 @@ public class ChessGame {
                             ChessPosition spot = moveToCheck.getEndPosition();
                             if (gameBoard.getPiece(spot) != null) {
                                 if (gameBoard.getPiece(spot).getPieceType() == ChessPiece.PieceType.KING && gameBoard.getPiece(spot).getTeamColor() == teamColor) {
-                                    System.out.println("check!");
-                                    System.out.println(moveToCheck);
+                                    //System.out.println("check!");
+                                    //System.out.println(moveToCheck);
                                     return true;
                                 }
                             }
@@ -153,7 +157,8 @@ public class ChessGame {
                 }
             }
         }
-        System.out.println(enemyMoves);
+        //System.out.println("no check.");
+        //System.out.println(enemyMoves);
         return false;
     }
 
