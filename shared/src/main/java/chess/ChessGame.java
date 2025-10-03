@@ -107,9 +107,23 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece movingPiece = gameBoard.getPiece(start);
-        gameBoard.removePiece(start);
-        gameBoard.addPiece(end, movingPiece);                           // add pawn logic
-        //throw new InvalidMoveException("Not implemented");
+        ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
+        Collection<ChessMove> validMoveList = new ArrayList<>();
+        validMoveList = validMoves(start);
+        Iterator<ChessMove> validItr = validMoveList.iterator();
+        boolean canMakeMove = false;
+        while (validItr.hasNext()) {
+            ChessMove possibleMove = validItr.next();
+            if (possibleMove.getEndPosition() == end) {
+                canMakeMove = true;
+                break;
+            }
+        }
+        if (canMakeMove) {
+            gameBoard.removePiece(start);
+            gameBoard.addPiece(end, movingPiece);
+        }
+        else throw new InvalidMoveException("Invalid Move");
     }
 
     public void testMove(ChessMove move) {
