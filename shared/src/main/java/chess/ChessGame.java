@@ -114,14 +114,21 @@ public class ChessGame {
         boolean canMakeMove = false;
         while (validItr.hasNext()) {
             ChessMove possibleMove = validItr.next();
-            if (possibleMove.getEndPosition() == end) {
+            if (possibleMove.getEndPosition() == end && possibleMove.getPromotionPiece() == promotionPiece) {
                 canMakeMove = true;
                 break;
             }
         }
         if (canMakeMove) {
             gameBoard.removePiece(start);
-            gameBoard.addPiece(end, movingPiece);
+            if (promotionPiece == null) {
+                gameBoard.addPiece(end, movingPiece);
+            }
+            else {
+                gameBoard.addPiece(end, new ChessPiece(movingPiece.getTeamColor(), promotionPiece));
+            }
+            if (teamTurn == TeamColor.WHITE) teamTurn = TeamColor.BLACK;
+            else teamTurn = TeamColor.WHITE;
         }
         else throw new InvalidMoveException("Invalid Move");
     }
