@@ -106,12 +106,13 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece movingPiece = gameBoard.getPiece(start);
+        if (movingPiece == null) throw new InvalidMoveException("no piece selected");
         if (movingPiece.getTeamColor() != teamTurn) throw new InvalidMoveException("incorrect team turn");
         ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
         Collection<ChessMove> validMoveList = new ArrayList<>();
         validMoveList = validMoves(start);
-        System.out.println(validMoveList);
-        System.out.println(move);
+        //System.out.println(validMoveList);
+        //System.out.println(move);
         Iterator<ChessMove> validItr = validMoveList.iterator();
         boolean canMakeMove = false;
         while (validItr.hasNext()) {
