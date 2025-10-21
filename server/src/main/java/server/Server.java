@@ -1,9 +1,12 @@
 package server;
 
+import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
 
 import service.UserService;
+
+import java.util.Map;
 
 public class Server {
 
@@ -18,8 +21,21 @@ public class Server {
     private void RegisterHandler(Context ctx) {
         System.out.println("Register Handler Hit!");
         System.out.println(ctx.body());
-        UserService RegisterResult
+        Map bodyObject = getBodyObject(ctx, Map.class);
+        System.out.println(bodyObject);
+        System.out.println(bodyObject.get("username"));
+        //UserService RegisterResult
         ctx.status(400);
+    }
+
+    private static <T> T getBodyObject(Context context, Class<T> clazz) {
+        var bodyObject = new Gson().fromJson(context.body(), clazz);
+
+        if (bodyObject == null) {
+            throw new RuntimeException("missing required body");
+        }
+
+        return bodyObject;
     }
 
     public int run(int desiredPort) {
