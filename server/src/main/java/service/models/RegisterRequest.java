@@ -1,6 +1,7 @@
 package service.models;
 
 public record RegisterRequest(
-        String authToken,
-        String username
+        String username,
+        String password,
+        String email
 ) {}

@@ -1,6 +1,6 @@
 package service.models;
 
 public record RegisterResult(
-        String authToken,
-        String username
+        String username,
+        String authToken
 ) {}
