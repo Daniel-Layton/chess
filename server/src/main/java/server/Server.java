@@ -3,6 +3,8 @@ package server;
 import io.javalin.*;
 import io.javalin.http.Context;
 
+import service.UserService;
+
 public class Server {
 
     private final Javalin javalin;
@@ -15,6 +17,8 @@ public class Server {
 
     private void RegisterHandler(Context ctx) {
         System.out.println("Register Handler Hit!");
+        System.out.println(ctx.body());
+        UserService RegisterResult
         ctx.status(400);
     }
 
