@@ -25,6 +25,7 @@ public class Server {
         javalin.post("/session", this::LoginHandler);
         javalin.delete("/session", this::LogoutHandler);
         javalin.post("/game", this::CreateHandler);
+        javalin.put("/game", this::JoinHandler);
         javalin.delete("/db", this::ClearHandler);
     }
 
@@ -96,7 +97,6 @@ public class Server {
 
         try {
             String auth = ctx.header("Authorization");
-            System.out.println(auth);
             parser = serializer.fromJson(ctx.body(), CreateRequest.class);
             request = new CreateRequest(auth, parser.gameName());
             if (request.authToken().isBlank() || request.gameName().isBlank()) throw new Exception("empty body or gameName");
@@ -106,13 +106,6 @@ public class Server {
             return;
         }
 
-        if (ctx.body().isBlank()) {
-            ctx.status(400);
-            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad request")));
-            return;
-        }
-
-
         try {
             CreateResult result = gameService.create(request);
             ctx.status(200);
@@ -120,6 +113,36 @@ public class Server {
         } catch(DataAccessException e) {
             ctx.status(401);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+        }
+    }
+
+    private void JoinHandler(Context ctx) {
+        var serializer = new Gson();
+        GameService gameService = new GameService();
+        JoinRequest parser;
+        JoinRequest request;
+
+        try {
+            String auth = ctx.header("Authorization");
+            parser = serializer.fromJson(ctx.body(), JoinRequest.class);
+            request = new JoinRequest(auth, parser.playerColor(), parser.gameID());
+            if (request.authToken().isBlank() || request.playerColor() == null || request.gameID().isBlank()) throw new Exception("empty body or gameName");
+        } catch(Exception e) {
+            ctx.status(400);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad request")));
+            return;
+        }
+
+        try {
+            JoinResult result = gameService.join(request);
+            ctx.status(200);
+            ctx.json(serializer.toJson(result));
+        } catch(DataAccessException e) {
+            ctx.status(401);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+        } catch (Exception e) {
+            ctx.status(500);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad color choice")));
         }
     }
 
