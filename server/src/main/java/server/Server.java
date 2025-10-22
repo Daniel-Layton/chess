@@ -32,7 +32,7 @@ public class Server {
 
     private void RegisterHandler(Context ctx) {
         var serializer = new Gson();
-        UserService userService = new UserService();
+        UserService userService = this.userService;
 //        System.out.println("Register Handler Hit!");
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
         if (request.password() == null || request.username() == null || request.email() == null) {
@@ -52,7 +52,7 @@ public class Server {
 
     private void LoginHandler(Context ctx) {
         var serializer = new Gson();
-        UserService userService = new UserService();
+        UserService userService = this.userService;
 //        System.out.println("Login Handler Hit!");
         LoginRequest request = serializer.fromJson(ctx.body(), LoginRequest.class);
         if (request.password() == null || request.username() == null) {
@@ -72,7 +72,7 @@ public class Server {
 
     private void LogoutHandler(Context ctx) {
         var serializer = new Gson();
-        UserService userService = new UserService();
+        UserService userService = this.userService;
         LogoutRequest request = new LogoutRequest(ctx.header("Authorization"));
         System.out.println();
         if (request.authToken() == null) {
@@ -92,7 +92,7 @@ public class Server {
 
     private void CreateHandler(Context ctx) {
         var serializer = new Gson();
-        GameService gameService = new GameService();
+        GameService gameService = this.gameService;
         CreateRequest parser;
         CreateRequest request;
 
@@ -119,7 +119,7 @@ public class Server {
 
     private void JoinHandler(Context ctx) {
         var serializer = new Gson();
-        GameService gameService = new GameService();
+        GameService gameService = this.gameService;
         JoinRequest parser;
         JoinRequest request;
 
@@ -152,7 +152,7 @@ public class Server {
 
     private void ListHandler(Context ctx) {
         var serializer = new Gson();
-        GameService gameService = new GameService();
+        GameService gameService = this.gameService;
         String auth = ctx.header("Authorization");
 
         if (auth == null) {
@@ -176,7 +176,7 @@ public class Server {
     private void ClearHandler(Context ctx) {
         var serializer = new Gson();
 //        System.out.println("Clear Handler Hit!");
-        ClearService clearService = new ClearService();
+        ClearService clearService = this.clearService;
         clearService.clear();
     }
 

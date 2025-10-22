@@ -6,7 +6,6 @@ import model.GameData;
 import service.models.*;
 
 import java.util.List;
-import java.util.UUID;
 
 public class GameService {
 
@@ -19,6 +18,8 @@ public class GameService {
         if (authQuery.username() == null) throw new DataAccessException("unauthorized");
         List<GameData> gameList = GameDB.listGames();
         ListResult result = new ListResult(gameList);
+        System.out.println(gameList);
+        System.out.println(result.games());
         return result;
     }
 

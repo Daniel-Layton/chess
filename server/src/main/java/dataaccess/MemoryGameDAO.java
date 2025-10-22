@@ -12,6 +12,7 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public void createGame(GameData gameData) throws DataAccessException {
         games.put(gameData.gameID(), gameData);
+        System.out.println(games);
     }
 
     @Override
@@ -26,6 +27,7 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public List<GameData> listGames() throws DataAccessException {
+        System.out.println(games);
         return new ArrayList<>(games.values());
     }
 }
