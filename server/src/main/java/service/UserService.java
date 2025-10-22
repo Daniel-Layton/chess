@@ -4,7 +4,6 @@ import dataaccess.MemoryUserDAO;
 import model.AuthData;
 import model.UserData;
 import service.models.*;
-import dataaccess.UserDAO;
 
 import java.util.UUID;
 
