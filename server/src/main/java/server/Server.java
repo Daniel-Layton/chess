@@ -23,6 +23,7 @@ public class Server {
         // Register your endpoints and exception handlers here.
         javalin.post("/user", this::RegisterHandler);
         javalin.post("/session", this::LoginHandler);
+        javalin.delete("/session", this::LogoutHandler);
         javalin.delete("/db", this::ClearHandler);
     }
 
@@ -63,6 +64,26 @@ public class Server {
         } catch(DataAccessException e) {
             ctx.status(401);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unaauthorized")));
+        }
+    }
+
+    private void LogoutHandler(Context ctx) {
+        var serializer = new Gson();
+        UserService userService = new UserService();
+        LogoutRequest request = new LogoutRequest(ctx.header("Authorization"));
+        System.out.println();
+        if (request.authToken() == null) {
+            ctx.status(400);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad request")));
+            return;
+        }
+        try {
+            LogoutResult result = userService.logout(request);
+            ctx.status(200);
+            ctx.json(serializer.toJson(result));
+        } catch(DataAccessException e) {
+            ctx.status(401);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
         }
     }
 

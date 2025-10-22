@@ -23,7 +23,7 @@ public class UserService {
         RegisterResult result = new RegisterResult(registerRequest.username(), newAuth.authToken());
         return result;
     }
-    public LoginResult login(LoginRequest loginRequest) throws DataAccessException{
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
         UserData query = UserDB.getUser(loginRequest.username());
         if (query == null || !Objects.equals(query.password(), loginRequest.password())) throw new DataAccessException("unauthorized");
         AuthData newAuth = new AuthData(UUID.randomUUID().toString(), loginRequest.username());
@@ -31,6 +31,10 @@ public class UserService {
         LoginResult result = new LoginResult(newAuth.authToken(), newAuth.username());
         return result;
     }
-    public void logout(LogoutRequest logoutRequest) {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
+        AuthData query = AuthDB.getAuth(logoutRequest.authToken());
+        if (query.username() == null) throw new DataAccessException("unauthorized");
+        AuthDB.deleteAuth(logoutRequest.authToken());
+        return new LogoutResult();
     }
 }
