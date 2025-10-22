@@ -91,14 +91,18 @@ public class Server {
     private void CreateHandler(Context ctx) {
         var serializer = new Gson();
         GameService gameService = new GameService();
-        CreateRequest request = new CreateRequest(ctx.header("Authorization"), ctx.body());
-        System.out.println(request.authToken());
-        System.out.println(request.gameName());
-        if (request.authToken() == null) {
+        String auth = ctx.header("Authorization");
+
+        System.out.println(auth);
+        System.out.println(ctx.body());
+
+        if (ctx.body().isBlank()) {
             ctx.status(400);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad request")));
             return;
         }
+
+        CreateRequest request = new CreateRequest(auth, ctx.body());
         try {
             CreateResult result = gameService.create(request);
             ctx.status(200);
