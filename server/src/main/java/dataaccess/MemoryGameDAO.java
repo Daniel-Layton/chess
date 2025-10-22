@@ -2,7 +2,9 @@ package dataaccess;
 
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MemoryGameDAO implements GameDAO{
     final private HashMap<String, GameData> games = DataBank.getInstance().games;
@@ -20,5 +22,10 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
         games.put(gameData.gameID(), gameData);
+    }
+
+    @Override
+    public List<GameData> listGames() throws DataAccessException {
+        return new ArrayList<>(games.values());
     }
 }

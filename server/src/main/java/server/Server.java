@@ -26,6 +26,7 @@ public class Server {
         javalin.delete("/session", this::LogoutHandler);
         javalin.post("/game", this::CreateHandler);
         javalin.put("/game", this::JoinHandler);
+        javalin.get("/game", this::ListHandler);
         javalin.delete("/db", this::ClearHandler);
     }
 
@@ -148,6 +149,29 @@ public class Server {
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad color choice")));
         }
     }
+
+    private void ListHandler(Context ctx) {
+        var serializer = new Gson();
+        GameService gameService = new GameService();
+        String auth = ctx.header("Authorization");
+
+        if (auth == null) {
+            ctx.status(400);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad request")));
+            return;
+        }
+
+        ListRequest request = new ListRequest(auth);
+
+            try {
+                ListResult result = gameService.list(request);
+                ctx.status(200);
+                ctx.json(serializer.toJson(result));
+            } catch (DataAccessException e) {
+                ctx.status(401);
+                ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+            }
+        }
 
     private void ClearHandler(Context ctx) {
         var serializer = new Gson();

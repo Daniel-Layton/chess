@@ -5,6 +5,7 @@ import model.AuthData;
 import model.GameData;
 import service.models.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public class GameService {
@@ -13,9 +14,14 @@ public class GameService {
     MemoryAuthDAO AuthDB = new MemoryAuthDAO();
     int GameIDinc = 0;
 
-    public ListResult list(ListRequest listRequest) throws AlreadyTakenException {
-        return null;
+    public ListResult list(ListRequest listRequest) throws DataAccessException {
+        AuthData authQuery = AuthDB.getAuth(listRequest.authToken());
+        if (authQuery.username() == null) throw new DataAccessException("unauthorized");
+        List<GameData> gameList = GameDB.listGames();
+        ListResult result = new ListResult(gameList);
+        return result;
     }
+
     public CreateResult create(CreateRequest createRequest) throws DataAccessException {
         AuthData authQuery = AuthDB.getAuth(createRequest.authToken());
         if (authQuery.username() == null) throw new DataAccessException("unauthorized");
@@ -24,6 +30,7 @@ public class GameService {
         GameDB.createGame(newGame);
         return new CreateResult(Integer.toString(GameIDinc));
     }
+
     public JoinResult join(JoinRequest joinRequest) throws Exception {
         AuthData authQuery = AuthDB.getAuth(joinRequest.authToken());
         if (authQuery.username() == null) throw new DataAccessException("unauthorized");
