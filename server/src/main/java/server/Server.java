@@ -5,6 +5,8 @@ import dataaccess.AlreadyTakenException;
 import io.javalin.*;
 import io.javalin.http.Context;
 
+import service.ClearService;
+import service.GameService;
 import service.UserService;
 import service.models.ErrorMessage;
 import service.models.RegisterRequest;
@@ -15,6 +17,9 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
+    UserService userService = new UserService();
+    GameService gameService = new GameService();
+    ClearService clearService = new ClearService();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -43,8 +48,6 @@ public class Server {
 
     private void ClearHandler(Context ctx) {
         var serializer = new Gson();
-        UserService userService = new UserService();
-
         System.out.println("Register Handler Hit!");
         System.out.println(ctx.body());
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
