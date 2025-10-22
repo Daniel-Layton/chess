@@ -29,8 +29,13 @@ public class Server {
     private void RegisterHandler(Context ctx) {
         var serializer = new Gson();
         UserService userService = new UserService();
-        System.out.println("Register Handler Hit!");
+//        System.out.println("Register Handler Hit!");
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
+        if (request.password() == null || request.username() == null || request.email() == null) {
+            ctx.status(400);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad request")));
+            return;
+        }
         try {
             RegisterResult result = userService.register(request);
             ctx.status(200);
@@ -43,7 +48,7 @@ public class Server {
 
     private void ClearHandler(Context ctx) {
         var serializer = new Gson();
-        System.out.println("Clear Handler Hit!");
+//        System.out.println("Clear Handler Hit!");
         ClearService clearService = new ClearService();
         clearService.clear();
     }
