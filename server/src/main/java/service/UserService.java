@@ -1,6 +1,5 @@
 package service;
-import dataaccess.AlreadyTakenException;
-import dataaccess.MemoryUserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import service.models.*;
@@ -9,16 +8,17 @@ import java.util.UUID;
 
 public class UserService {
 
-    MemoryUserDAO database = new MemoryUserDAO();
+    MemoryUserDAO UserDB = new MemoryUserDAO();
+    MemoryAuthDAO AuthDB = new MemoryAuthDAO();
 
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException {
         System.out.println("Hit Register Service!!!");
-        UserData query = database.getUser(registerRequest.username());
+        UserData query = UserDB.getUser(registerRequest.username());
         if (query != null) throw new AlreadyTakenException("Username already taken");
         UserData newUser = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
-        database.createUser(newUser);
+        UserDB.createUser(newUser);
         AuthData newAuth = new AuthData(UUID.randomUUID().toString(), registerRequest.username());
-        database.createAuth(newAuth);
+        AuthDB.createAuth(newAuth);
         RegisterResult result = new RegisterResult(registerRequest.username(), newAuth.authToken());
         return result;
     }
