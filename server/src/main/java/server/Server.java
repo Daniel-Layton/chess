@@ -23,19 +23,16 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         // Register your endpoints and exception handlers here.
         javalin.post("/user", this::RegisterHandler);
+        javalin.delete("/db", this::ClearHandler);
     }
 
     private void RegisterHandler(Context ctx) {
         var serializer = new Gson();
         UserService userService = new UserService();
         System.out.println("Register Handler Hit!");
-        System.out.println(ctx.body());
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
-        System.out.println(request);
         try {
             RegisterResult result = userService.register(request);
-            System.out.println(result.authToken());
-            System.out.println(result.username());
             ctx.status(200);
             ctx.json(serializer.toJson(result));
         } catch(AlreadyTakenException e) {
@@ -46,20 +43,9 @@ public class Server {
 
     private void ClearHandler(Context ctx) {
         var serializer = new Gson();
-        System.out.println("Register Handler Hit!");
-        System.out.println(ctx.body());
-        RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
-        System.out.println(request);
-        try {
-            RegisterResult result = userService.register(request);
-            System.out.println(result.authToken());
-            System.out.println(result.username());
-            ctx.status(200);
-            ctx.json(serializer.toJson(result));
-        } catch(AlreadyTakenException e) {
-            ctx.status(403);
-            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: username already taken")));
-        }
+        System.out.println("Clear Handler Hit!");
+        ClearService clearService = new ClearService();
+        clearService.clear();
     }
 
     public int run(int desiredPort) {
