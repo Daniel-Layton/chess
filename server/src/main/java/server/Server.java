@@ -1,10 +1,12 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.AlreadyTakenException;
 import io.javalin.*;
 import io.javalin.http.Context;
 
 import service.UserService;
+import service.models.ErrorMessage;
 import service.models.RegisterRequest;
 import service.models.RegisterResult;
 
@@ -23,13 +25,20 @@ public class Server {
     private void RegisterHandler(Context ctx) {
         var serializer = new Gson();
         UserService userService = new UserService();
-
         System.out.println("Register Handler Hit!");
         System.out.println(ctx.body());
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
         System.out.println(request);
-        RegisterResult result = userService.register(request);
-        ctx.status(400);
+        try {
+            RegisterResult result = userService.register(request);
+            System.out.println(result.authToken());
+            System.out.println(result.username());
+            ctx.status(200);
+            ctx.json(serializer.toJson(result));
+        } catch(AlreadyTakenException e) {
+            ctx.status(403);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: username already taken")));
+        }
     }
 
     public int run(int desiredPort) {
