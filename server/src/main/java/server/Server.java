@@ -140,6 +140,9 @@ public class Server {
         } catch(DataAccessException e) {
             ctx.status(401);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+        } catch (AlreadyTakenException e) {
+            ctx.status(403);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: color already taken")));
         } catch (Exception e) {
             ctx.status(500);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad color choice")));
