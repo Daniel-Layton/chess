@@ -4,6 +4,7 @@ import model.AuthData;
 import model.UserData;
 import service.models.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class UserService {
@@ -22,8 +23,13 @@ public class UserService {
         RegisterResult result = new RegisterResult(registerRequest.username(), newAuth.authToken());
         return result;
     }
-    public LoginResult login(LoginRequest loginRequest) {
-        return null;
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException{
+        UserData query = UserDB.getUser(loginRequest.username());
+        if (query == null || !Objects.equals(query.password(), loginRequest.password())) throw new DataAccessException("unauthorized");
+        AuthData newAuth = new AuthData(UUID.randomUUID().toString(), loginRequest.username());
+        AuthDB.createAuth(newAuth);
+        LoginResult result = new LoginResult(newAuth.authToken(), newAuth.username());
+        return result;
     }
     public void logout(LogoutRequest logoutRequest) {
     }
