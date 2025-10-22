@@ -12,8 +12,6 @@ import service.models.ErrorMessage;
 import service.models.RegisterRequest;
 import service.models.RegisterResult;
 
-import java.util.Map;
-
 public class Server {
 
     private final Javalin javalin;
