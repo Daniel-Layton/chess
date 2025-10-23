@@ -1,3 +1,5 @@
+package service;
+
 import chess.ChessGame;
 import dataaccess.AlreadyTakenException;
 import dataaccess.DataAccessException;
@@ -5,7 +7,6 @@ import dataaccess.DataBank;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import service.*;
 import service.models.*;
 
 import java.util.HashMap;
