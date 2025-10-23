@@ -66,7 +66,7 @@ public class Server {
             ctx.json(serializer.toJson(result));
         } catch(DataAccessException e) {
             ctx.status(401);
-            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unaauthorized")));
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
         }
     }
 
@@ -174,8 +174,6 @@ public class Server {
         }
 
     private void ClearHandler(Context ctx) {
-        var serializer = new Gson();
-//        System.out.println("Clear Handler Hit!");
         ClearService clearService = this.clearService;
         clearService.clear();
     }
