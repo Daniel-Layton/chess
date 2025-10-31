@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -28,12 +29,31 @@ public class SQLUserDAO implements UserDAO{
                 ps.executeUpdate();
             }
         } catch (Exception e) {
+            System.out.println("well there's your problem!");
             throw new DataAccessException("error accessing auth Database");
         }
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        return null;
+        System.out.println("INFO - getUserDAO hit");
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "select * from users where username = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (ResultSet resultSet = ps.executeQuery()) {
+                    if (resultSet.next()) {
+                        String password_hash = resultSet.getString("password");
+                        String email = resultSet.getString("email");
+                        return new UserData(username, password_hash, email);
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("error accessing user Database");
+        }
     }
 }

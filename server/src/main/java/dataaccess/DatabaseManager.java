@@ -27,6 +27,40 @@ public class DatabaseManager {
         } catch (SQLException ex) {
             throw new DataAccessException("failed to create database", ex);
         }
+        createTables();
+    }
+
+    private static void createTables() throws DataAccessException {
+
+        // The SQL to create the two tables
+        String createUsersTable = """
+            CREATE TABLE IF NOT EXISTS users (
+                id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                username VARCHAR(255) NOT NULL UNIQUE,
+                password_hash VARCHAR(255) NOT NULL,
+                email VARCHAR(255),
+                PRIMARY KEY (id)
+            );
+            """;
+
+        String createAuthTable = """
+            CREATE TABLE IF NOT EXISTS auth (
+                auth_string VARCHAR(255) NOT NULL,
+                username VARCHAR(255) NOT NULL,
+                PRIMARY KEY (auth_string),
+            );
+            """;
+
+        try (Connection conn = getConnection(); // <-- Connects to the specific database
+             Statement stmt = conn.createStatement()) {
+
+            // Execute the table creation statements
+            stmt.executeUpdate(createUsersTable);
+            stmt.executeUpdate(createAuthTable);
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Could not initialize database schema.", e);
+        }
     }
 
     /**

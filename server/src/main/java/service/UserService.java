@@ -13,7 +13,7 @@ public class UserService {
     SQLAuthDAO AuthDB = new SQLAuthDAO();
 
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException {
-//        System.out.println("Hit Register Service!!!");
+        System.out.println("Hit Register Service!!!");
         UserData query = UserDB.getUser(registerRequest.username());
         if (query != null) throw new AlreadyTakenException("Username already taken");
         UserData newUser = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
