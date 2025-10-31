@@ -1,6 +1,5 @@
 package dataaccess;
 
-import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -20,7 +19,7 @@ public class SQLUserDAO implements UserDAO{
         System.out.println("INFO - createUserDAO hit");
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "insert into users (username, password, email) VALUES (?, ?, ?)";
+            var statement = "insert into users (username, password_hash, email) VALUES (?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
                 ps.setString(1, userData.username());
@@ -28,6 +27,9 @@ public class SQLUserDAO implements UserDAO{
                 ps.setString(3, userData.email());
                 ps.executeUpdate();
             }
+        } catch (SQLException e) {
+            System.out.println("sql problem in create user dao");
+            throw new DataAccessException("sql error");
         } catch (Exception e) {
             System.out.println("well there's your problem!");
             throw new DataAccessException("error accessing auth Database");

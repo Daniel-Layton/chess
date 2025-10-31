@@ -47,7 +47,7 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS auth (
                 auth_string VARCHAR(255) NOT NULL,
                 username VARCHAR(255) NOT NULL,
-                PRIMARY KEY (auth_string),
+                PRIMARY KEY (auth_string)
             );
             """;
 
