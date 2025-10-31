@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class UserService {
 
-    MemoryUserDAO UserDB = new MemoryUserDAO();
+    SQLUserDAO UserDB = new SQLUserDAO();
     SQLAuthDAO AuthDB = new SQLAuthDAO();
 
     public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException {
