@@ -10,17 +10,16 @@ import java.util.List;
 public class GameService {
 
     MemoryGameDAO GameDB = new MemoryGameDAO();
-    MemoryAuthDAO AuthDB = new MemoryAuthDAO();
+    SQLAuthDAO AuthDB = new SQLAuthDAO();
     int GameIDinc = 0;
 
     public ListResult list(ListRequest listRequest) throws DataAccessException {
         AuthData authQuery = AuthDB.getAuth(listRequest.authToken());
-        if (authQuery.username() == null) throw new DataAccessException("unauthorized");
+        if (authQuery.username() == null) {
+            throw new DataAccessException("unauthorized");
+        }
         List<GameData> gameList = GameDB.listGames();
-        ListResult result = new ListResult(gameList);
-        System.out.println(gameList);
-        System.out.println(result.games());
-        return result;
+        return new ListResult(gameList);
     }
 
     public CreateResult create(CreateRequest createRequest) throws DataAccessException {
