@@ -33,7 +33,7 @@ public class service {
     @Test
     @Order(1)
     @DisplayName("Register Pass")
-    public void registerPass() throws AlreadyTakenException {
+    public void registerPass() throws AlreadyTakenException, DataAccessException {
         RegisterResult result = userService.register(new RegisterRequest("user", "u0u0u0", "u@email.com"));
         Assertions.assertNotNull(result);
     }
@@ -41,7 +41,7 @@ public class service {
     @Test
     @Order(2)
     @DisplayName("Register Fail (duplicate username)")
-    public void registerFail() throws AlreadyTakenException {
+    public void registerFail() throws AlreadyTakenException, DataAccessException {
         RegisterResult result1 = userService.register(new RegisterRequest("user", "u0u0u0", "u@email.com"));
         Assertions.assertThrows(AlreadyTakenException.class, () -> userService.register(new RegisterRequest("user", "u0u0u0", "u@email.com")));
     }
@@ -58,7 +58,7 @@ public class service {
     @Test
     @Order(4)
     @DisplayName("Login Fail (incorrect password)")
-    public void loginFail() throws AlreadyTakenException {
+    public void loginFail() throws AlreadyTakenException, DataAccessException {
         userService.register(new RegisterRequest("user1", "u1u1u1", "u1@email.com"));
         Assertions.assertThrows(Exception.class, () -> userService.login(new LoginRequest("u1u1u2", "user1")));
     }

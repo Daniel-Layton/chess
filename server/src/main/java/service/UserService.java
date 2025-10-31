@@ -10,9 +10,9 @@ import java.util.UUID;
 public class UserService {
 
     MemoryUserDAO UserDB = new MemoryUserDAO();
-    MemoryAuthDAO AuthDB = new MemoryAuthDAO();
+    SQLAuthDAO AuthDB = new SQLAuthDAO();
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException {
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException {
 //        System.out.println("Hit Register Service!!!");
         UserData query = UserDB.getUser(registerRequest.username());
         if (query != null) throw new AlreadyTakenException("Username already taken");

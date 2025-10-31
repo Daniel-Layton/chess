@@ -47,6 +47,9 @@ public class Server {
         } catch(AlreadyTakenException e) {
             ctx.status(403);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: username already taken")));
+        } catch(DataAccessException e) {
+            ctx.status(404);
+            ctx.json(serializer.toJson(new ErrorMessage("message", e.getMessage())));
         }
     }
 
