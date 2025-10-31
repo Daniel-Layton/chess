@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 import model.UserData;
@@ -9,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO{
@@ -25,21 +27,19 @@ public class SQLGameDAO implements GameDAO{
                 ps.setString(3, gameData.blackUsername());
                 ps.setString(4, gameData.whiteUsername());
                 ps.setString(5, serializer.toJson(gameData.game()));
-                System.out.println(serializer.toJson(gameData.game()));
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
             System.out.println("sql problem in create game dao");
             throw new DataAccessException("sql error");
         } catch (Exception e) {
-            System.out.println("well there's your problem!");
             throw new DataAccessException("error accessing auth Database");
         }
     }
 
     @Override
     public GameData getGame(String gameID) throws DataAccessException {
-        System.out.println("INFO - createGameDAO hit");
+        System.out.println("INFO - getGameDAO hit");
 
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "select * from games where gameID = ?";
@@ -52,27 +52,67 @@ public class SQLGameDAO implements GameDAO{
                         String blackUsername = resultSet.getString("blackUsername");
                         String whiteUsername = resultSet.getString("whiteUsername");
                         String gameData = resultSet.getString("gameData");
-                        return new UserData(gameName, blackUsername, whiteUsername, serializer.fromJson(__________));
+                        return new GameData(gameID, gameName, blackUsername, whiteUsername, serializer.fromJson(gameData, ChessGame.class));
                     } else {
                         return null;
                     }
+                }
             }
         } catch (SQLException e) {
             System.out.println("sql problem in create game dao");
             throw new DataAccessException("sql error");
         } catch (Exception e) {
-            System.out.println("well there's your problem!");
             throw new DataAccessException("error accessing auth Database");
         }
     }
 
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
-
+        System.out.println("INFO - updateGameDAO hit");
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "UPDATE games SET gameData = ? WHERE gameID = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                var serializer = new Gson();
+                ps.setString(1, gameData.gameID());
+                ps.setString(2, serializer.toJson(gameData.game()));
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.out.println("sql problem in create game dao");
+            throw new DataAccessException("sql error");
+        } catch (Exception e) {
+            throw new DataAccessException("error accessing auth Database");
+        }
     }
 
     @Override
     public List<GameData> listGames() throws DataAccessException {
-        return List.of();
+        System.out.println("INFO - listGamesDAO hit");
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, gameName, blackUsername, whiteUsername, gameData FROM games";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                var serializer = new Gson();
+                List<GameData> gamesList = new ArrayList<>();
+
+                ResultSet resultSet = ps.executeQuery();
+                    while (resultSet.next()) {
+                        String gameID = resultSet.getString("gameID");
+                        String gameName = resultSet.getString("gameName");
+                        String blackUsername = resultSet.getString("blackUsername");
+                        String whiteUsername = resultSet.getString("whiteUsername");
+                        String gameData = resultSet.getString("gameData");
+                        ChessGame chessGame = serializer.fromJson(gameData, ChessGame.class);
+
+                        GameData game = new GameData(gameID, gameName, blackUsername, whiteUsername, chessGame);
+                        gamesList.add(game);
+                    }
+                return gamesList;
+            }
+        } catch (SQLException e) {
+            System.out.println("sql problem in create game dao");
+            throw new DataAccessException("sql error");
+        } catch (Exception e) {
+            throw new DataAccessException("error accessing auth Database");
+        }
     }
 }
