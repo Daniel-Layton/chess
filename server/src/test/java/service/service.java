@@ -19,7 +19,7 @@ public class service {
     private static ClearService clearService;
 
     @AfterEach
-    void cleanUp() {
+    void cleanUp() throws DataAccessException {
         clearService.clear();
     }
 

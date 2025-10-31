@@ -176,7 +176,7 @@ public class Server {
             }
         }
 
-    private void ClearHandler(Context ctx) {
+    private void ClearHandler(Context ctx) throws DataAccessException {
         ClearService clearService = this.clearService;
         clearService.clear();
     }

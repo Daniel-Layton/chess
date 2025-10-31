@@ -1,13 +1,18 @@
 package service;
+import dataaccess.DataAccessException;
 import dataaccess.DataBank;
+import dataaccess.SQLClearDAO;
 import service.models.ClearResult;
 
 public class ClearService {
-    public ClearResult clear() {
-//        System.out.println("Hit Clear Service!!!");
+
+    SQLClearDAO clearDB = new SQLClearDAO();
+
+    public ClearResult clear() throws DataAccessException {
         DataBank.getInstance().users.clear();
         DataBank.getInstance().auths.clear();
         DataBank.getInstance().games.clear();
+        clearDB.clearTables();
         return new ClearResult();
     }
 }
