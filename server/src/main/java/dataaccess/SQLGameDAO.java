@@ -2,10 +2,12 @@ package dataaccess;
 
 import com.google.gson.Gson;
 import model.GameData;
+import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -37,7 +39,31 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public GameData getGame(String gameID) throws DataAccessException {
-        return null;
+        System.out.println("INFO - createGameDAO hit");
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "select * from games where gameID = ?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                var serializer = new Gson();
+                ps.setString(1, gameID);
+                try (ResultSet resultSet = ps.executeQuery()) {
+                    if (resultSet.next()) {
+                        String gameName = resultSet.getString("gameName");
+                        String blackUsername = resultSet.getString("blackUsername");
+                        String whiteUsername = resultSet.getString("whiteUsername");
+                        String gameData = resultSet.getString("gameData");
+                        return new UserData(gameName, blackUsername, whiteUsername, serializer.fromJson(__________));
+                    } else {
+                        return null;
+                    }
+            }
+        } catch (SQLException e) {
+            System.out.println("sql problem in create game dao");
+            throw new DataAccessException("sql error");
+        } catch (Exception e) {
+            System.out.println("well there's your problem!");
+            throw new DataAccessException("error accessing auth Database");
+        }
     }
 
     @Override
