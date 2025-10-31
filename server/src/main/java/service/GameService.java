@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GameService {
 
-    MemoryGameDAO GameDB = new MemoryGameDAO();
+    SQLGameDAO GameDB = new SQLGameDAO();
     SQLAuthDAO AuthDB = new SQLAuthDAO();
     int GameIDinc = 0;
 

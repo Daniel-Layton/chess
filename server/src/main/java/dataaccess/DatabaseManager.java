@@ -51,12 +51,23 @@ public class DatabaseManager {
             );
             """;
 
+        String createGamesTable = """
+            CREATE TABLE IF NOT EXISTS games (
+                gameID VARCHAR(255) NOT NULL,
+                gameName VARCHAR(255) NOT NULL,
+                blackUsername VARCHAR(255),
+                whiteUsername VARCHAR(255),
+                gameData JSON NOT NULL,
+                PRIMARY KEY (gameID)
+            );""";
+
         try (Connection conn = getConnection(); // <-- Connects to the specific database
              Statement stmt = conn.createStatement()) {
 
             // Execute the table creation statements
             stmt.executeUpdate(createUsersTable);
             stmt.executeUpdate(createAuthTable);
+            stmt.executeUpdate(createGamesTable);
 
         } catch (SQLException e) {
             throw new DataAccessException("Could not initialize database schema.", e);
