@@ -14,9 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO{
+
+    public SQLGameDAO() {
+        try {DatabaseManager.createDatabase();}
+        catch (DataAccessException e) {
+            System.out.println("database exists");
+        }
+    }
+
     @Override
     public void createGame(GameData gameData) throws DataAccessException {
         System.out.println("INFO - createGameDAO hit");
+        System.out.println(gameData.gameName());
+        System.out.println(" ");
 
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "insert into games (gameID, gameName, blackUsername, whiteUsername, gameData) VALUES (?, ?, ?, ?, ?)";
@@ -40,6 +50,8 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public GameData getGame(String gameID) throws DataAccessException {
         System.out.println("INFO - getGameDAO hit");
+        System.out.println(gameID);
+        System.out.println(" ");
 
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "select * from games where gameID = ?";
@@ -69,6 +81,9 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public void updateGame(GameData gameData) throws DataAccessException {
         System.out.println("INFO - updateGameDAO hit");
+        System.out.println(gameData.gameName());
+        System.out.println(" ");
+
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "UPDATE games SET gameData = ? WHERE gameID = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -88,6 +103,7 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public List<GameData> listGames() throws DataAccessException {
         System.out.println("INFO - listGamesDAO hit");
+        System.out.println(" ");
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "SELECT gameID, gameName, blackUsername, whiteUsername, gameData FROM games";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -98,6 +114,7 @@ public class SQLGameDAO implements GameDAO{
                     while (resultSet.next()) {
                         String gameID = resultSet.getString("gameID");
                         String gameName = resultSet.getString("gameName");
+                        System.out.println(gameName);
                         String blackUsername = resultSet.getString("blackUsername");
                         String whiteUsername = resultSet.getString("whiteUsername");
                         String gameData = resultSet.getString("gameData");
@@ -106,6 +123,7 @@ public class SQLGameDAO implements GameDAO{
                         GameData game = new GameData(gameID, gameName, blackUsername, whiteUsername, chessGame);
                         gamesList.add(game);
                     }
+                System.out.println("Returning " + gamesList.size() + " gameData");
                 return gamesList;
             }
         } catch (SQLException e) {

@@ -17,6 +17,8 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public void createUser(UserData userData) throws DataAccessException {
         System.out.println("INFO - createUserDAO hit");
+        System.out.println(userData.username());
+        System.out.println(" ");
 
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "insert into users (username, password_hash, email) VALUES (?, ?, ?)";
@@ -39,6 +41,8 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public UserData getUser(String username) throws DataAccessException {
         System.out.println("INFO - getUserDAO hit");
+        System.out.println(username);
+        System.out.println(" ");
 
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "select * from users where username = ?";

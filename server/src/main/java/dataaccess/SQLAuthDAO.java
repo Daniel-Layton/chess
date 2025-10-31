@@ -16,6 +16,8 @@ public class SQLAuthDAO implements AuthDAO{
     @Override
     public void createAuth(AuthData authData) throws DataAccessException {
         System.out.println("INFO - createAuthDAO hit");
+        System.out.println(authData.username());
+        System.out.println(" ");
 
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "insert into auth (auth_string, username) VALUES (?, ?)";
@@ -32,6 +34,8 @@ public class SQLAuthDAO implements AuthDAO{
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
         System.out.println("INFO - getAuthDAO hit");
+        System.out.println(authToken);
+        System.out.println(" ");
 
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "select username from auth where auth_string = ?";
@@ -54,6 +58,9 @@ public class SQLAuthDAO implements AuthDAO{
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
         System.out.println("INFO - deleteAuthDAO hit");
+        System.out.println(authToken);
+        System.out.println(" ");
+
         try (Connection conn = DatabaseManager.getConnection()) {
             var statement = "delete from auth where auth_string = ?";
             int rows_affected = 0;
