@@ -5,6 +5,7 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import service.models.*;
 
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ public class UserService {
     SQLUserDAO UserDB = new SQLUserDAO();
     SQLAuthDAO AuthDB = new SQLAuthDAO();
 
-    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException {
+    public RegisterResult register(RegisterRequest registerRequest) throws AlreadyTakenException, DataAccessException, SQLException {
         UserData query = UserDB.getUser(registerRequest.username());
         if (query != null) throw new AlreadyTakenException("Username already taken");
         UserData newUser = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email(), null);
@@ -23,14 +24,10 @@ public class UserService {
         RegisterResult result = new RegisterResult(registerRequest.username(), newAuth.authToken());
         return result;
     }
-    public LoginResult login(LoginRequest loginRequest) throws DataAccessException {
+    public LoginResult login(LoginRequest loginRequest) throws DataAccessException, SQLException {
         System.out.println("INFO - login service hit");
         System.out.println(loginRequest.username() + " is trying to log in");
         UserData query = UserDB.getUser(loginRequest.username());
-        System.out.println(query.username());
-        System.out.println(loginRequest.password());
-        System.out.println(query.password());
-        System.out.println(BCrypt.hashpw(loginRequest.password(), query.salt()));
         if (query == null || !Objects.equals(query.password(), BCrypt.hashpw(loginRequest.password(), query.salt()))) {
             System.out.println("login password mismatch / user not found");
             throw new DataAccessException("unauthorized");
@@ -41,7 +38,7 @@ public class UserService {
         LoginResult result = new LoginResult(newAuth.authToken(), newAuth.username());
         return result;
     }
-    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException, SQLException {
         AuthData query = AuthDB.getAuth(logoutRequest.authToken());
         if (query.username() == null) throw new DataAccessException("unauthorized");
         AuthDB.deleteAuth(logoutRequest.authToken());

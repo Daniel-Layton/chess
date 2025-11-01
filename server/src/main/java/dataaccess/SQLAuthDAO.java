@@ -14,7 +14,7 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void createAuth(AuthData authData) throws DataAccessException {
+    public void createAuth(AuthData authData) throws DataAccessException, SQLException {
         System.out.println("INFO - createAuthDAO hit");
         System.out.println(authData.username());
         System.out.println(" ");
@@ -26,13 +26,13 @@ public class SQLAuthDAO implements AuthDAO{
                 ps.setString(2, authData.username());
                 ps.executeUpdate();
             }
-        } catch (Exception e) {
-            throw new DataAccessException("error accessing auth Database");
+        } catch (SQLException e) {
+            throw new SQLException("internal server error");
         }
     }
 
     @Override
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public AuthData getAuth(String authToken) throws DataAccessException, SQLException {
         System.out.println("INFO - getAuthDAO hit");
         System.out.println(authToken);
         System.out.println(" ");
@@ -46,17 +46,19 @@ public class SQLAuthDAO implements AuthDAO{
                         String username = resultSet.getString("username");
                         return new AuthData(authToken, username);
                     } else {
-                        return null;
+                        throw new DataAccessException("error: unauthenticated");
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new DataAccessException("error accessing auth Database");
+        } catch (DataAccessException e) {
+            throw new DataAccessException("error: unauthenticated");
+        } catch (SQLException e) {
+            throw new SQLException("internal server error");
         }
     }
 
     @Override
-    public void deleteAuth(String authToken) throws DataAccessException {
+    public void deleteAuth(String authToken) throws DataAccessException, SQLException {
         System.out.println("INFO - deleteAuthDAO hit");
         System.out.println(authToken);
         System.out.println(" ");
@@ -69,8 +71,8 @@ public class SQLAuthDAO implements AuthDAO{
                 rows_affected = ps.executeUpdate();
                 System.out.println(rows_affected + " deletions from auth table");
             }
-        } catch (Exception e) {
-            throw new DataAccessException("error accessing auth Database");
+        } catch (SQLException e) {
+            throw new SQLException("internal server error");
         }
     }
 }

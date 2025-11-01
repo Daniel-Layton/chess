@@ -15,7 +15,7 @@ public class SQLUserDAO implements UserDAO{
     }
 
     @Override
-    public void createUser(UserData userData) throws DataAccessException {
+    public void createUser(UserData userData) throws DataAccessException, SQLException {
         System.out.println("INFO - createUserDAO hit");
         System.out.println(userData.username());
         System.out.println(userData.password());
@@ -34,14 +34,14 @@ public class SQLUserDAO implements UserDAO{
             }
         } catch (SQLException e) {
             System.out.println("sql problem in create user dao");
-            throw new DataAccessException("sql error");
+            throw new SQLException("sql error");
         } catch (Exception e) {
             throw new DataAccessException("error accessing user Database");
         }
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException {
+    public UserData getUser(String username) throws DataAccessException, SQLException {
         System.out.println("INFO - getUserDAO hit");
         System.out.println(username);
         System.out.println(" ");
@@ -62,7 +62,7 @@ public class SQLUserDAO implements UserDAO{
                 }
             }
         } catch (Exception e) {
-            throw new DataAccessException("error accessing user Database");
+            throw new SQLException("error accessing user Database");
         }
     }
 }

@@ -11,6 +11,8 @@ import service.GameService;
 import service.UserService;
 import service.models.*;
 
+import java.sql.SQLException;
+
 public class Server {
 
     private final Javalin javalin;
@@ -50,6 +52,9 @@ public class Server {
         } catch(DataAccessException e) {
             ctx.status(404);
             ctx.json(serializer.toJson(new ErrorMessage("message", e.getMessage())));
+        } catch (SQLException e) {
+            ctx.status(500);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: internal server error")));
         }
     }
 
@@ -70,6 +75,9 @@ public class Server {
         } catch(DataAccessException e) {
             ctx.status(401);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+        } catch (SQLException e) {
+            ctx.status(500);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: internal server error")));
         }
     }
 
@@ -90,6 +98,9 @@ public class Server {
         } catch(DataAccessException e) {
             ctx.status(401);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+        } catch (SQLException e) {
+            ctx.status(500);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: internal server error")));
         }
     }
 
@@ -117,6 +128,9 @@ public class Server {
         } catch(DataAccessException e) {
             ctx.status(401);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+        } catch (SQLException e) {
+            ctx.status(500);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: internal server error")));
         }
     }
 
@@ -173,12 +187,24 @@ public class Server {
             } catch (DataAccessException e) {
                 ctx.status(401);
                 ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+            } catch (SQLException e) {
+                ctx.status(500);
+                ctx.json(serializer.toJson(new ErrorMessage("message", "Error: internal server error")));
             }
         }
 
     private void ClearHandler(Context ctx) throws DataAccessException {
         ClearService clearService = this.clearService;
-        clearService.clear();
+        var serializer = new Gson();
+        try {
+            clearService.clear();
+        } catch (DataAccessException e) {
+            ctx.status(401);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: unauthorized")));
+        } catch (SQLException e) {
+            ctx.status(500);
+            ctx.json(serializer.toJson(new ErrorMessage("message", "Error: internal server error")));
+        }
     }
 
     public int run(int desiredPort) {

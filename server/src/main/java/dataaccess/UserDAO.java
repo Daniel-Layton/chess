@@ -2,8 +2,10 @@ package dataaccess;
 import model.UserData;
 import service.models.RegisterRequest;
 
-public interface UserDAO {
-    void createUser(UserData userData) throws DataAccessException;
+import java.sql.SQLException;
 
-    UserData getUser(String username) throws DataAccessException;
+public interface UserDAO {
+    void createUser(UserData userData) throws DataAccessException, SQLException;
+
+    UserData getUser(String username) throws DataAccessException, SQLException;
 }

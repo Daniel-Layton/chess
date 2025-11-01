@@ -4,11 +4,13 @@ import dataaccess.DataBank;
 import dataaccess.SQLClearDAO;
 import service.models.ClearResult;
 
+import java.sql.SQLException;
+
 public class ClearService {
 
     SQLClearDAO clearDB = new SQLClearDAO();
 
-    public ClearResult clear() throws DataAccessException {
+    public ClearResult clear() throws DataAccessException, SQLException {
         DataBank.getInstance().users.clear();
         DataBank.getInstance().auths.clear();
         DataBank.getInstance().games.clear();
