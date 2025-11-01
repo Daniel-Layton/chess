@@ -64,7 +64,7 @@ public class SQLGameDAO implements GameDAO{
                         String blackUsername = resultSet.getString("blackUsername");
                         String whiteUsername = resultSet.getString("whiteUsername");
                         String gameData = resultSet.getString("gameData");
-                        return new GameData(gameID, gameName, blackUsername, whiteUsername, serializer.fromJson(gameData, ChessGame.class));
+                        return new GameData(gameID, whiteUsername, blackUsername, gameName, serializer.fromJson(gameData, ChessGame.class));
                     } else {
                         return null;
                     }
@@ -85,11 +85,15 @@ public class SQLGameDAO implements GameDAO{
         System.out.println(" ");
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "UPDATE games SET gameData = ? WHERE gameID = ?";
+            var statement = "UPDATE games SET gameName = ?, blackUsername = ?, whiteUsername = ?, gameData = ? WHERE gameID = ?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 var serializer = new Gson();
-                ps.setString(1, gameData.gameID());
-                ps.setString(2, serializer.toJson(gameData.game()));
+                ps.setString(1, gameData.gameName());
+                ps.setString(2, gameData.blackUsername());
+                ps.setString(3, gameData.whiteUsername());
+                ps.setString(4, serializer.toJson(gameData.game()));
+                ps.setString(5, gameData.gameID());
+                System.out.println("updating game " + gameData.gameID() + " to " + serializer.toJson(gameData.game()));
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
@@ -114,13 +118,12 @@ public class SQLGameDAO implements GameDAO{
                     while (resultSet.next()) {
                         String gameID = resultSet.getString("gameID");
                         String gameName = resultSet.getString("gameName");
-                        System.out.println(gameName);
                         String blackUsername = resultSet.getString("blackUsername");
                         String whiteUsername = resultSet.getString("whiteUsername");
                         String gameData = resultSet.getString("gameData");
                         ChessGame chessGame = serializer.fromJson(gameData, ChessGame.class);
 
-                        GameData game = new GameData(gameID, gameName, blackUsername, whiteUsername, chessGame);
+                        GameData game = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
                         gamesList.add(game);
                     }
                 System.out.println("Returning " + gamesList.size() + " gameData");

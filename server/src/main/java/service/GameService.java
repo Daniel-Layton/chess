@@ -35,6 +35,7 @@ public class GameService {
         AuthData authQuery = AuthDB.getAuth(joinRequest.authToken());
         if (authQuery.username() == null) throw new DataAccessException("unauthorized");
         GameData game = GameDB.getGame(joinRequest.gameID());
+        System.out.println(authQuery.username() + " is joining game " + game.gameName());
 
         if (joinRequest.playerColor() == ChessGame.TeamColor.BLACK) {
             if (game.blackUsername() == null) {
