@@ -18,23 +18,25 @@ public class SQLUserDAO implements UserDAO{
     public void createUser(UserData userData) throws DataAccessException {
         System.out.println("INFO - createUserDAO hit");
         System.out.println(userData.username());
+        System.out.println(userData.password());
         System.out.println(" ");
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            var statement = "insert into users (username, password_hash, email) VALUES (?, ?, ?)";
+            var statement = "insert into users (username, password_hash, email, salt) VALUES (?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+                String salt = BCrypt.gensalt();
+                String hashedPassword = BCrypt.hashpw(userData.password(), salt);
                 ps.setString(1, userData.username());
                 ps.setString(2, hashedPassword);
                 ps.setString(3, userData.email());
+                ps.setString(4, salt);
                 ps.executeUpdate();
             }
         } catch (SQLException e) {
             System.out.println("sql problem in create user dao");
             throw new DataAccessException("sql error");
         } catch (Exception e) {
-            System.out.println("well there's your problem!");
-            throw new DataAccessException("error accessing auth Database");
+            throw new DataAccessException("error accessing user Database");
         }
     }
 
@@ -50,9 +52,10 @@ public class SQLUserDAO implements UserDAO{
                 ps.setString(1, username);
                 try (ResultSet resultSet = ps.executeQuery()) {
                     if (resultSet.next()) {
-                        String password_hash = resultSet.getString("password");
+                        String password_hash = resultSet.getString("password_hash");
+                        String salt = resultSet.getString("salt");
                         String email = resultSet.getString("email");
-                        return new UserData(username, password_hash, email);
+                        return new UserData(username, password_hash, email, salt);
                     } else {
                         return null;
                     }

@@ -39,6 +39,7 @@ public class DatabaseManager {
                 username VARCHAR(255) NOT NULL UNIQUE,
                 password_hash VARCHAR(255) NOT NULL,
                 email VARCHAR(255),
+                salt VARCHAR(255) NOT NULL,
                 PRIMARY KEY (id)
             );
             """;
