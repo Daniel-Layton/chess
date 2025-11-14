@@ -198,7 +198,7 @@ public class REPL {
                 pseudoID++;
                 String name = game.gameName();
                 String white = game.whiteUsername() != null ? game.whiteUsername() : "empty";
-                String black = game.blackUsername() != null ? game.whiteUsername() : "empty";
+                String black = game.blackUsername() != null ? game.blackUsername() : "empty";
                 String gameString = String.format(
                         " %d. Game name: %s\tWhite: %s\tBlack: %s",
                         pseudoID,
