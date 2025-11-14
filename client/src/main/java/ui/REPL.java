@@ -47,11 +47,12 @@ public class REPL {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + ">>> ");
-    }
-
-    private String test() {
-        return "\nTested\n";
+        if (this.status == 0) {
+            System.out.print("\n" + "[LOGGED_OUT] >>> ");
+        }
+        else {
+            System.out.print("\n" + "[LOGGED_IN] >>> ");
+        }
     }
 
     public String eval0(String input) {
@@ -101,21 +102,21 @@ public class REPL {
     }
 
     public String help0() {
-        String l1 = "register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n";
-        String l2 = "login <USERNAME> <PASSWORD> - to log in\n";
-        String l3 = "quit - to exit the program\n";
-        String l4 = "help - to see the help menu\n";
+        String l1 = "  register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n";
+        String l2 = "  login <USERNAME> <PASSWORD> - to log in\n";
+        String l3 = "  quit - to exit the program\n";
+        String l4 = "  help - to see the help menu\n";
         return l1 + l2 + l3 + l4;
     }
 
     public String help1() {
-        String l1 = "create <NAME> - create a new chess game\n";
-        String l2 = "list - to see all games\n";
-        String l3 = "join <ID> [WHITE|BLACK] - join a game\n";
-        String l4 = "observe <ID> - spectate\n";
-        String l5 = "logout - logs out the user\n";
-        String l6 = "quit - to exit the program\n";
-        String l7 = "help - to see the help menu\n";
+        String l1 = "  create <NAME> - create a new chess game\n";
+        String l2 = "  list - to see all games\n";
+        String l3 = "  join <ID> [WHITE|BLACK] - join a game\n";
+        String l4 = "  observe <ID> - spectate\n";
+        String l5 = "  logout - logs out the user\n";
+        String l6 = "  quit - to exit the program\n";
+        String l7 = "  help - to see the help menu\n";
         return l1 + l2 + l3 + l4 + l5 + l6 + l7;
     }
 
