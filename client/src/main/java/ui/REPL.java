@@ -70,9 +70,35 @@ public class REPL {
         }
     }
 
-    public String eval1(String input) { return null; }
+    public String eval1(String input) {
+        try {
+            String[] tokens = input.toLowerCase().split(" ");
+            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "help" -> help1();
+                case "quit" -> "quit";
+                default -> help1();
+            };
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
 
-    public String eval2(String input) { return null; }
+    public String eval2(String input) {
+        try {
+            String[] tokens = input.toLowerCase().split(" ");
+            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "help" -> help2();
+                case "quit" -> "quit";
+                default -> help2();
+            };
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
 
     public String help0() {
         String l1 = "register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n";
@@ -80,6 +106,23 @@ public class REPL {
         String l3 = "quit - to exit the program\n";
         String l4 = "help - to see the help menu\n";
         return l1 + l2 + l3 + l4;
+    }
+
+    public String help1() {
+        String l1 = "create <NAME> - create a new chess game\n";
+        String l2 = "list - to see all games\n";
+        String l3 = "join <ID> [WHITE|BLACK] - join a game\n";
+        String l4 = "observe <ID> - spectate\n";
+        String l5 = "logout - logs out the user\n";
+        String l6 = "quit - to exit the program\n";
+        String l7 = "help - to see the help menu\n";
+        return l1 + l2 + l3 + l4 + l5 + l6 + l7;
+    }
+
+    public String help2() {
+        String l1 = "quit - to exit the program\n";
+        String l2 = "help - to see the help menu\n";
+        return l1 + l2;
     }
 
     public String register(String[] params) {
