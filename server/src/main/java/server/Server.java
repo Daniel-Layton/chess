@@ -169,6 +169,7 @@ public class Server {
 
     private void ListHandler(Context ctx) {
         var serializer = new Gson();
+        System.out.println("List Handler hit");
         GameService gameService = this.gameService;
         String auth = ctx.header("Authorization");
 

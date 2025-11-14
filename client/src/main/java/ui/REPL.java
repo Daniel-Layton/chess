@@ -9,10 +9,12 @@ import ui.models.*;
 public class REPL {
     ServerFacade server;
     int status;
+    String auth;
 
     public REPL(String serverUrl) throws Exception {
         this.server = new ServerFacade(serverUrl);
         this.status = 0;
+        this.auth = null;
         //ws = new WebSocketFacade(serverUrl, this);
     }
 
@@ -77,6 +79,7 @@ public class REPL {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "list" -> list();
                 case "help" -> help1();
                 case "quit" -> "quit";
                 default -> help1();
@@ -135,6 +138,7 @@ public class REPL {
         try {
             result = server.register(request);
             status = 1;
+            auth = result.authToken();
             return "Signed in as new user - " + result.username();
         }
         catch(Exception e) {
@@ -151,10 +155,25 @@ public class REPL {
         try {
             result = server.login(request);
             status = 1;
+            auth = result.authToken();
+            System.out.println(auth);
             return "Signed in as new user - " + result.username();
         }
         catch(Exception e) {
             return "Login failed: Incorrect username or password";
+        }
+    }
+
+    public String list() {
+        ListResult result;
+        ListRequest request = new ListRequest(auth);
+        try {
+            result = server.list(request);
+            System.out.println(result);
+            return "list return";
+        }
+        catch(Exception e) {
+            return "List failed: Bad auth token";
         }
     }
 }

@@ -26,13 +26,16 @@ class ServerFacade {
 
     public LoginResult login(LoginRequest login_request) throws Exception {
         var request = buildRequest("POST", "/session", login_request);
-        System.out.println(login_request.username());
-        System.out.println(login_request.password());
         var response = sendRequest(request);
         return handleResponse(response, LoginResult.class);
     }
 
-   // public JoinResult join(JoinRequest request) { ... }
+    public ListResult list(ListRequest list_request) throws Exception {
+        var request = buildRequest("GET", "/game", list_request);
+        System.out.println(list_request.authToken());
+        var response = sendRequest(request);
+        return handleResponse(response, ListResult.class);
+    }
 
 
 
