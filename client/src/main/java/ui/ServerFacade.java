@@ -31,7 +31,7 @@ class ServerFacade {
     }
 
     public ListResult list(ListRequest list_request) throws Exception {
-        var request = buildRequest("GET", "/game", list_request);
+        var request = buildHeaderRequest("GET", "/game", null, list_request.authToken());
         System.out.println(list_request.authToken());
         var response = sendRequest(request);
         return handleResponse(response, ListResult.class);
@@ -42,6 +42,17 @@ class ServerFacade {
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
+                .method(method, makeRequestBody(body));
+        if (body != null) {
+            request.setHeader("Content-Type", "application/json");
+        }
+        return request.build();
+    }
+
+    private HttpRequest buildHeaderRequest(String method, String path, Object body, String authToken) {
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + path))
+                .header("Authorization", authToken)
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
