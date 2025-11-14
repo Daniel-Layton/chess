@@ -42,7 +42,11 @@ class ServerFacade {
         return handleResponse(response, ListResult.class);
     }
 
-
+    public JoinResult join(JoinRequest join_request) throws Exception {
+        var request = buildHeaderRequest("PUT", "/game", join_request, join_request.authToken());
+        var response = sendRequest(request);
+        return handleResponse(response, JoinResult.class);
+    }
 
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder()

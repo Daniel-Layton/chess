@@ -1,9 +1,8 @@
 package ui;
 
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.StringJoiner;
+import java.util.*;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 import ui.models.*;
@@ -12,6 +11,8 @@ public class REPL {
     ServerFacade server;
     int status;
     String auth;
+    Map<Integer, GameData> gameList = new HashMap<>();
+
 
     public REPL(String serverUrl) throws Exception {
         this.server = new ServerFacade(serverUrl);
@@ -83,6 +84,7 @@ public class REPL {
             return switch (cmd) {
                 case "create" -> create(params);
                 case "list" -> list();
+                case "join" -> join(params);
                 case "help" -> help1();
                 case "quit" -> "quit";
                 default -> help1();
@@ -190,6 +192,7 @@ public class REPL {
             }
             int pseudoID = 0;
             StringJoiner joiner = new StringJoiner("\n");
+            gameList.clear();
 
             for (GameData game : result.games()) {
                 pseudoID++;
@@ -204,6 +207,7 @@ public class REPL {
                         black
                 );
                 joiner.add(gameString);
+                gameList.put(pseudoID, game);
             }
             return joiner.toString();
         }
@@ -216,11 +220,22 @@ public class REPL {
         if (params.length != 2) {
             return "join game failed. Usage: join <GAME ID> <COLOR>";
         }
+        ChessGame.TeamColor joinColor;
+        if (Objects.equals(params[1], "white")) {
+            joinColor = ChessGame.TeamColor.WHITE;
+        }
+        else if (Objects.equals(params[1], "black")) {
+            joinColor = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            return "join game failed. Color value must be 'white' or 'black'";
+        }
         JoinResult result;
-        JoinRequest request = new JoinRequest(auth, params[0]);
+        JoinRequest request = new JoinRequest(auth, joinColor, gameList.get(Integer.parseInt(params[0])).gameID());
         try {
             result = server.join(request);
-            return drawBoard(result.)
+            //return drawBoard(request.)
+            return "game joined!";
         }
         catch(Exception e) {
             return "Join failed: No Board or No Room";
