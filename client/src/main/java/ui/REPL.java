@@ -4,8 +4,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
-import ui.models.RegisterRequest;
-import ui.models.RegisterResult;
+import ui.models.*;
 
 public class REPL {
     ServerFacade server;
@@ -63,6 +62,7 @@ public class REPL {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
+                case "login" -> login(params);
                 case "quit" -> "quit";
                 default -> help0();
             };
@@ -138,8 +138,23 @@ public class REPL {
             return "Signed in as new user - " + result.username();
         }
         catch(Exception e) {
-            System.out.println(e);
             return "Registration failed. User may already exist";
+        }
+    }
+
+    public String login(String[] params) {
+        if (params.length != 2) {
+            return "Login failed. Usage: login <USERNAME> <PASSWORD>";
+        }
+        LoginResult result;
+        LoginRequest request = new LoginRequest(params[1], params[0]);
+        try {
+            result = server.login(request);
+            status = 1;
+            return "Signed in as new user - " + result.username();
+        }
+        catch(Exception e) {
+            return "Login failed: Incorrect username or password";
         }
     }
 }

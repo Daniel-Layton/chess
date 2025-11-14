@@ -1,8 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
-import ui.models.RegisterRequest;
-import ui.models.RegisterResult;
+import ui.models.*;
 
 import java.net.*;
 import java.net.http.*;
@@ -25,7 +24,13 @@ class ServerFacade {
         return handleResponse(response, RegisterResult.class);
     }
 
-   // public LoginResult login(LoginRequest request) { ... }
+    public LoginResult login(LoginRequest login_request) throws Exception {
+        var request = buildRequest("POST", "/session", login_request);
+        System.out.println(login_request.username());
+        System.out.println(login_request.password());
+        var response = sendRequest(request);
+        return handleResponse(response, LoginResult.class);
+    }
 
    // public JoinResult join(JoinRequest request) { ... }
 
