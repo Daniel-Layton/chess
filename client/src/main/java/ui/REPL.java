@@ -85,6 +85,7 @@ public class REPL {
                 case "create" -> create(params);
                 case "list" -> list();
                 case "join" -> join(params);
+                case "observe" -> observe(params);
                 case "help" -> help1();
                 case "quit" -> "quit";
                 default -> help1();
@@ -239,6 +240,19 @@ public class REPL {
         }
         catch(Exception e) {
             return "Join failed: No Board or No Room";
+        }
+    }
+
+    public String observe(String[] params) {
+        if (params.length != 1) {
+            return "observe game failed. Usage: observe <GAME ID>";
+        }
+        try {
+            //return drawBoard(gameList.get(Integer.parseInt(params[0])).gameID())
+            return "observing game " + gameList.get(Integer.parseInt(params[0])).gameID();
+        }
+        catch(Exception e) {
+            return "Observe failed: No Board with that ID";
         }
     }
 }
