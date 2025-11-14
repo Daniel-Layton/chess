@@ -32,7 +32,6 @@ class ServerFacade {
 
     public ListResult list(ListRequest list_request) throws Exception {
         var request = buildHeaderRequest("GET", "/game", null, list_request.authToken());
-        System.out.println(list_request.authToken());
         var response = sendRequest(request);
         return handleResponse(response, ListResult.class);
     }

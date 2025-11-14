@@ -2,8 +2,10 @@ package ui;
 
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.StringJoiner;
 
 import com.google.gson.Gson;
+import model.GameData;
 import ui.models.*;
 
 public class REPL {
@@ -156,7 +158,6 @@ public class REPL {
             result = server.login(request);
             status = 1;
             auth = result.authToken();
-            System.out.println(auth);
             return "Signed in as new user - " + result.username();
         }
         catch(Exception e) {
@@ -169,8 +170,27 @@ public class REPL {
         ListRequest request = new ListRequest(auth);
         try {
             result = server.list(request);
-            System.out.println(result);
-            return "list return";
+            if (result.games() == null || result.games().isEmpty()) {
+                return "No games found on the server.";
+            }
+            int pseudoID = 0;
+            StringJoiner joiner = new StringJoiner("\n");
+
+            for (GameData game : result.games()) {
+                pseudoID++;
+                String name = game.gameName();
+                String white = game.whiteUsername() != null ? game.whiteUsername() : "empty";
+                String black = game.blackUsername() != null ? game.whiteUsername() : "empty";
+                String gameString = String.format(
+                        " %d. Game name: %s\tWhite: %s\tBlack: %s",
+                        pseudoID,
+                        name,
+                        white,
+                        black
+                );
+                joiner.add(gameString);
+            }
+            return joiner.toString();
         }
         catch(Exception e) {
             return "List failed: Bad auth token";
