@@ -81,6 +81,7 @@ public class REPL {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "create" -> create(params);
                 case "list" -> list();
                 case "help" -> help1();
                 case "quit" -> "quit";
@@ -158,10 +159,24 @@ public class REPL {
             result = server.login(request);
             status = 1;
             auth = result.authToken();
-            return "Signed in as new user - " + result.username();
+            return "Signed in as user - " + result.username();
         }
         catch(Exception e) {
             return "Login failed: Incorrect username or password";
+        }
+    }
+
+    public String create(String[] params) {
+        if (params.length != 1) {
+            return "Create game failed. Usage: create <GAME NAME>";
+        }
+        CreateRequest request = new CreateRequest(auth, params[0]);
+        try {
+            server.create(request);
+            return "Successfully created game " + params[0];
+        }
+        catch(Exception e) {
+            return "Create failed: Bad Auth Token";
         }
     }
 

@@ -30,6 +30,12 @@ class ServerFacade {
         return handleResponse(response, LoginResult.class);
     }
 
+    public CreateResult create(CreateRequest create_request) throws Exception {
+        var request = buildHeaderRequest("POST", "/game", create_request, create_request.authToken());
+        var response = sendRequest(request);
+        return handleResponse(response, CreateResult.class);
+    }
+
     public ListResult list(ListRequest list_request) throws Exception {
         var request = buildHeaderRequest("GET", "/game", null, list_request.authToken());
         var response = sendRequest(request);
