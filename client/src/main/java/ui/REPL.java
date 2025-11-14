@@ -211,4 +211,19 @@ public class REPL {
             return "List failed: Bad auth token";
         }
     }
+
+    public String join(String[] params) {
+        if (params.length != 2) {
+            return "join game failed. Usage: join <GAME ID> <COLOR>";
+        }
+        JoinResult result;
+        JoinRequest request = new JoinRequest(auth, params[0]);
+        try {
+            result = server.join(request);
+            return drawBoard(result.)
+        }
+        catch(Exception e) {
+            return "Join failed: No Board or No Room";
+        }
+    }
 }
