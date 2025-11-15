@@ -93,13 +93,49 @@ public class ServerFacadeTests {
         }
     }
 
-    public void validLogoutRequestReceivesCorrectResult() {}
+    @Test
+    public void validLogoutRequestReceivesCorrectResult() {
+        try {
+            RegisterResult result1 = sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
+            sf.logout(new LogoutRequest(result1.authToken()));
+            Assertions.assertTrue(true);
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+    }
 
-    public void invalidLogoutRequestReceivesCorrectResult() {}
+    @Test
+    public void invalidLogoutRequestReceivesCorrectResult() {
+        try {
+            sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
+            sf.logout(new LogoutRequest("logout"));
+            Assertions.fail();
+        } catch (Exception e) {
+            Assertions.assertTrue(true);
+        }
+    }
 
-    public void validCreateRequestReceivesCorrectResult() {}
+    @Test
+    public void validCreateRequestReceivesCorrectResult() {
+        try {
+            RegisterResult result1 = sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
+            CreateResult result = sf.create(new CreateRequest(result1.authToken(), "testgame"));
+            Assertions.assertEquals(result.gameID(), "1");
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+    }
 
-    public void invalidCreateRequestReceivesCorrectResult() {}
+    @Test
+    public void invalidCreateRequestReceivesCorrectResult() {
+        try {
+            RegisterResult result1 = sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
+            CreateResult result = sf.create(new CreateRequest(result1.authToken(), ""));
+            Assertions.fail();
+        } catch (Exception e) {
+            Assertions.assertTrue(true);
+        }
+    }
 
     public void validListRequestReceivesCorrectResult() {}
 
