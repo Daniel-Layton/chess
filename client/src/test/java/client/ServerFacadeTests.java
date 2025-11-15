@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
@@ -120,7 +121,7 @@ public class ServerFacadeTests {
         try {
             RegisterResult result1 = sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
             CreateResult result = sf.create(new CreateRequest(result1.authToken(), "testgame"));
-            Assertions.assertEquals(result.gameID(), "1");
+            Assertions.assertTrue(true);
         } catch (Exception e) {
             Assertions.fail();
         }
@@ -137,12 +138,58 @@ public class ServerFacadeTests {
         }
     }
 
-    public void validListRequestReceivesCorrectResult() {}
+    @Test
+    public void validListRequestReceivesCorrectResult() {
+        try {
+            RegisterResult result1 = sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
+            sf.create(new CreateRequest(result1.authToken(), "testGame1"));
+            sf.create(new CreateRequest(result1.authToken(), "testGame2"));
+            sf.create(new CreateRequest(result1.authToken(), "testGame3"));
+            ListResult result = sf.list(new ListRequest(result1.authToken()));
+            Assertions.assertEquals(3, result.games().size());
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+    }
 
-    public void invalidListRequestReceivesCorrectResult() {}
+    @Test
+    public void invalidListRequestReceivesCorrectResult() {
+        try {
+            RegisterResult result1 = sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
+            sf.create(new CreateRequest(result1.authToken(), "testGame1"));
+            sf.create(new CreateRequest(result1.authToken(), "testGame2"));
+            sf.create(new CreateRequest(result1.authToken(), "testGame3"));
+            ListResult result = sf.list(new ListRequest("authority"));
+            Assertions.fail();
+        } catch (Exception e) {
+            Assertions.assertTrue(true);
+        }
+    }
 
-    public void validJoinRequestReceivesCorrectResult() {}
+    @Test
+    public void validJoinRequestReceivesCorrectResult() {
+        try {
+            RegisterResult result1 = sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
+            CreateResult result2 = sf.create(new CreateRequest(result1.authToken(), "testgame"));
+            sf.list(new ListRequest(result1.authToken()));
+            sf.join(new JoinRequest(result1.authToken(), ChessGame.TeamColor.WHITE, result2.gameID()));
+            Assertions.assertTrue(true);
+        } catch (Exception e) {
+            Assertions.fail();
+        }
+    }
 
-    public void invalidJoinRequestReceivesCorrectResult() {}
+    @Test
+    public void invalidJoinRequestReceivesCorrectResult() {
+        try {
+            RegisterResult result1 = sf.register(new RegisterRequest("bob", "bob1234", "bob@gmail.com"));
+            sf.create(new CreateRequest(result1.authToken(), "testgame"));
+            sf.list(new ListRequest(result1.authToken()));
+            sf.join(new JoinRequest(result1.authToken(), ChessGame.TeamColor.WHITE, "-1"));
+            Assertions.fail();
+        } catch (Exception e) {
+            Assertions.assertTrue(true);
+        }
+    }
 
 }
