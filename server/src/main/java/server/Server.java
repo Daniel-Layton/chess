@@ -37,7 +37,12 @@ public class Server {
         UserService userService = this.userService;
 //        System.out.println("Register Handler Hit!");
         RegisterRequest request = serializer.fromJson(ctx.body(), RegisterRequest.class);
-        if (request.password() == null || request.username() == null || request.email() == null) {
+        if (request.password() == null
+                || request.username() == null
+                || request.email() == null
+                || request.password().isEmpty()
+                || request.username().isEmpty()
+                || request.email().isEmpty()) {
             ctx.status(400);
             ctx.json(serializer.toJson(new ErrorMessage("message", "Error: bad request")));
             return;

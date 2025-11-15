@@ -9,7 +9,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 
-class ServerFacade {
+public class ServerFacade {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
@@ -54,6 +54,11 @@ class ServerFacade {
         return handleResponse(response, JoinResult.class);
     }
 
+    public void clear() throws Exception {
+        var request = buildRequest("DELETE", "/db", null);
+        sendRequest(request);
+    }
+
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
@@ -84,11 +89,7 @@ class ServerFacade {
     }
 
     private HttpResponse<String> sendRequest(HttpRequest request) throws Exception {
-        try {
-            return client.send(request, BodyHandlers.ofString());
-        } catch (Exception ex) {
-            throw new Exception();
-        }
+        return client.send(request, BodyHandlers.ofString());
     }
 
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws Exception {
