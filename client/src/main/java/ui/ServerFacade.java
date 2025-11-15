@@ -30,6 +30,12 @@ class ServerFacade {
         return handleResponse(response, LoginResult.class);
     }
 
+    public LogoutResult logout(LogoutRequest logout_request) throws Exception {
+        var request = buildHeaderRequest("DELETE", "/session", null, logout_request.authToken());
+        var response = sendRequest(request);
+        return handleResponse(response, LogoutResult.class);
+    }
+
     public CreateResult create(CreateRequest create_request) throws Exception {
         var request = buildHeaderRequest("POST", "/game", create_request, create_request.authToken());
         var response = sendRequest(request);

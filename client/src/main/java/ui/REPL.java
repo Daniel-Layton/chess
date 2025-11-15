@@ -86,6 +86,7 @@ public class REPL {
                 case "list" -> list();
                 case "join" -> join(params);
                 case "observe" -> observe(params);
+                case "logout" -> logout();
                 case "help" -> help1();
                 case "quit" -> "quit";
                 default -> help1();
@@ -166,6 +167,20 @@ public class REPL {
         }
         catch(Exception e) {
             return "Login failed: Incorrect username or password";
+        }
+    }
+
+    public String logout() {
+        LogoutResult result;
+        LogoutRequest request = new LogoutRequest(auth);
+        try {
+            result = server.logout(request);
+            status = 0;
+            auth = null;
+            return "Logged out of user";
+        }
+        catch(Exception e) {
+            return "Logout failed: Auth Token Error";
         }
     }
 
