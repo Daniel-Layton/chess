@@ -1,4 +1,5 @@
 import chess.*;
+import ui.DrawBoard;
 import ui.REPL;
 
 public class Main {

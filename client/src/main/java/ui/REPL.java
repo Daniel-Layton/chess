@@ -235,8 +235,7 @@ public class REPL {
         JoinRequest request = new JoinRequest(auth, joinColor, gameList.get(Integer.parseInt(params[0])).gameID());
         try {
             result = server.join(request);
-            //return drawBoard(request.)
-            return "game joined!";
+            return new DrawBoard(gameList.get(Integer.parseInt(params[0])).game()).draw(joinColor != ChessGame.TeamColor.WHITE);
         }
         catch(Exception e) {
             return "Join failed: No Board or No Room";
@@ -248,8 +247,7 @@ public class REPL {
             return "observe game failed. Usage: observe <GAME ID>";
         }
         try {
-            //return drawBoard(gameList.get(Integer.parseInt(params[0])).gameID())
-            return "observing game " + gameList.get(Integer.parseInt(params[0])).gameID();
+            return new DrawBoard(gameList.get(Integer.parseInt(params[0])).game()).draw(false);
         }
         catch(Exception e) {
             return "Observe failed: No Board with that ID";
