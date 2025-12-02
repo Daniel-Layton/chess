@@ -236,6 +236,7 @@ public class REPL {
         if (params.length != 2) {
             return "join game failed. Usage: join <GAME ID> <COLOR>";
         }
+        try {
         ChessGame.TeamColor joinColor;
         if (Objects.equals(params[1], "white")) {
             joinColor = ChessGame.TeamColor.WHITE;
@@ -248,12 +249,11 @@ public class REPL {
         }
         JoinResult result;
         JoinRequest request = new JoinRequest(auth, joinColor, gameList.get(Integer.parseInt(params[0])).gameID());
-        try {
             result = server.join(request);
             return new DrawBoard(gameList.get(Integer.parseInt(params[0])).game()).draw(joinColor != ChessGame.TeamColor.WHITE);
         }
         catch(Exception e) {
-            return "Join failed: No Board or No Room";
+            return "Join failed: No Board with ID " + params[0] + " or " + params[1] + " already taken";
         }
     }
 
