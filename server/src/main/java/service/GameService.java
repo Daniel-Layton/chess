@@ -1,5 +1,6 @@
 package service;
 import chess.ChessGame;
+import chess.ChessMove;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
@@ -86,23 +87,46 @@ public class GameService {
         }
     }
 
-    public GameData applyMove(String authToken, Integer gameID, Object move) throws Exception {
+    public GameData applyMove(String authToken, Integer gameID, ChessMove move) throws Exception {
         String username = usernameForToken(authToken);
         GameData gameData = getGameData(Integer.toString(gameID));
         if (gameData == null) throw new Exception("Game does not exist");
 
-        // At this point you must:
-        // 1) check that the authenticated username is allowed to move (owner of color whose turn it is)
-        // 2) call your ChessGame to validate and make the move
-        // 3) persist updated GameData via updateGameData
-        //
-        // Example (HIGH-LEVEL, adapt to your API):
-        //
-        // ChessGame cg = g.game();
-        // if (!cg.isTurnOf(username)) throw new Exception("not your turn");
-        // boolean ok = cg.makeMove(move); // returns true if legal and applied
-        // if (!ok) throw new Exception("illegal move");
-        // GameDB.updateGame(g);
-        return gameData;
+        ChessGame game = gameData.game();
+
+        if (game.isGameOver()) {
+            throw new IllegalStateException("Game is already over");
+        }
+
+        ChessGame.TeamColor playerColor =
+                username.equals(gameData.whiteUsername()) ? ChessGame.TeamColor.WHITE :
+                        username.equals(gameData.blackUsername()) ? ChessGame.TeamColor.BLACK :
+                                null;
+
+        if (playerColor == null) {
+            throw new IllegalStateException("Observer cannot move");
+        }
+
+        if (game.getTeamTurn() != playerColor) {
+            throw new IllegalStateException("Not your turn");
+        }
+
+        var legalMoves = game.validMoves(move.getStartPosition());
+        if (legalMoves == null || !legalMoves.contains(move)) {
+            throw new IllegalStateException("Invalid move");
+        }
+
+        game.makeMove(move);
+
+        GameData updated = new GameData(
+                gameData.gameID(),
+                gameData.whiteUsername(),
+                gameData.blackUsername(),
+                gameData.gameName(),
+                game
+        );
+
+        updateGameData(updated);
+        return updated;
     }
 }

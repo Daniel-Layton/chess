@@ -1,5 +1,7 @@
 package server.websocket;
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import io.javalin.websocket.WsCloseContext;
 import io.javalin.websocket.WsConnectContext;
@@ -8,6 +10,7 @@ import io.javalin.websocket.WsMessageContext;
 import service.GameService;
 import service.UserService;
 import model.GameData;
+import service.models.RegisterRequest;
 import websocket.commands.UserGameCommand;
 import websocket.messages.*;
 
@@ -24,12 +27,10 @@ public class WebSocketHandler {
         this.userService = userService;
     }
 
-    // WS connect
     public void handleConnect(WsConnectContext ctx) {
         System.out.println("WS connected: " + ctx.session);
     }
 
-    // WS message
     public void handleMessage(WsMessageContext ctx) {
         String json = ctx.message();
         WsContext ws = ctx;
@@ -55,7 +56,6 @@ public class WebSocketHandler {
         }
     }
 
-    // WS close
     public void handleClose(WsCloseContext ctx) {
         WsContext ws = ctx;
         if (connections.contains(ws)) {
@@ -69,7 +69,7 @@ public class WebSocketHandler {
 
     private void sendErrorToSession(WsContext ws, String message) {
         try {
-            ErrorMessage em = new ErrorMessage(message); // Correct ERROR type
+            ErrorMessage em = new ErrorMessage(message);
             ws.send(gson.toJson(em));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -92,11 +92,9 @@ public class WebSocketHandler {
 
             connections.add(ws, cmd.getGameID(), username);
 
-            // Send LOAD_GAME message
             LoadGameMessage load = new LoadGameMessage(gameData);
             ws.send(gson.toJson(load));
 
-            // Notify others
             String playerType = username.equals(gameData.whiteUsername()) ? "white"
                     : username.equals(gameData.blackUsername()) ? "black" : "observer";
 
@@ -110,28 +108,41 @@ public class WebSocketHandler {
     }
 
     private void handleMakeMove(WsContext ws, UserGameCommand cmd, String rawJson) {
+        if (cmd.getAuthToken() == null || cmd.getGameID() == null) {
+            sendErrorToSession(ws, "Error: missing authToken or gameID");
+            return;
+        }
+
         try {
-            if (cmd.getAuthToken() == null || cmd.getGameID() == null) {
-                sendErrorToSession(ws, "Error: missing authToken or gameID");
+            GameData gameData = gameService.getGameData(String.valueOf(cmd.getGameID()));
+            if (gameData.game().isGameOver()) {
+                sendErrorToSession(ws, "Error: game is already over");
                 return;
             }
 
-            // TODO: parse actual move
-            Object move = null;
+            var serializer = new Gson();
+            GameCommand gameCommand = serializer.fromJson(rawJson, GameCommand.class);
+
+            if (gameCommand.getMove() == null || gameCommand.getMove().getStartPosition() == null || gameCommand.getMove().getEndPosition() == null) {
+                sendErrorToSession(ws, "Error: missing move positions");
+                return;
+            }
+
+            ChessMove move = new ChessMove(gameCommand.getMove().getStartPosition(), gameCommand.getMove().getEndPosition(), null);
+
             GameData updated = gameService.applyMove(cmd.getAuthToken(), cmd.getGameID(), move);
 
             String mover = gameService.usernameForToken(cmd.getAuthToken());
 
-            // Send updated game state to everyone
             LoadGameMessage load = new LoadGameMessage(updated);
             connections.broadcastToGame(cmd.getGameID(), null, load);
 
-            // Notify all NON-moving players
             NotificationMessage notify = new NotificationMessage(mover + " made a move");
             connections.broadcastToGame(cmd.getGameID(), ws, notify);
 
         } catch (Exception e) {
             sendErrorToSession(ws, "Error: " + e.getMessage());
+            return;
         }
     }
 

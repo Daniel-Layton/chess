@@ -15,16 +15,19 @@ public class ChessGame {
 
     private ChessGame.TeamColor teamTurn;
     private ChessBoard gameBoard;
+    private boolean gameOver;
 
     public ChessGame() {
         this.teamTurn = ChessGame.TeamColor.WHITE;
         this.gameBoard = new ChessBoard();
         gameBoard.resetBoard();
+        this.gameOver = false;
     }
 
     public ChessGame(ChessGame.TeamColor Turn, ChessBoard Board) {
         this.teamTurn = Turn;
         this.gameBoard = Board;
+        this.gameOver = false;
     }
 
     @Override
@@ -207,6 +210,7 @@ public class ChessGame {
             }
         }
         if (teamMoves.isEmpty() && isInCheck(teamColor)) {
+            gameOver = true;
             return true;
         }
         return false;
@@ -233,9 +237,19 @@ public class ChessGame {
             }
         }
         if (teamMoves.isEmpty() && !isInCheck(teamColor)) {
+            gameOver = true;
             return true;
         }
         return false;
+    }
+
+    public void setGameOver() {
+        gameOver = true;
+    }
+
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     /**
