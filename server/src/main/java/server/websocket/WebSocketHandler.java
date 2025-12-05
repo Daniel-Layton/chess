@@ -116,14 +116,18 @@ public class WebSocketHandler {
                 return;
             }
 
-            Object move = null; // TODO: parse actual move from JSON
+            // TODO: parse actual move
+            Object move = null;
             GameData updated = gameService.applyMove(cmd.getAuthToken(), cmd.getGameID(), move);
 
+            String mover = gameService.usernameForToken(cmd.getAuthToken());
+
+            // Send updated game state to everyone
             LoadGameMessage load = new LoadGameMessage(updated);
             connections.broadcastToGame(cmd.getGameID(), null, load);
 
-            String username = gameService.usernameForToken(cmd.getAuthToken());
-            NotificationMessage notify = new NotificationMessage(username + " made a move");
+            // Notify all NON-moving players
+            NotificationMessage notify = new NotificationMessage(mover + " made a move");
             connections.broadcastToGame(cmd.getGameID(), ws, notify);
 
         } catch (Exception e) {
