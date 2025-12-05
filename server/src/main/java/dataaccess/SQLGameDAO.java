@@ -41,6 +41,7 @@ public class SQLGameDAO implements GameDAO{
             }
         } catch (SQLException e) {
             System.out.println("sql problem in create game dao");
+            e.printStackTrace();
             throw new DataAccessException("internal server error");
         } catch (Exception e) {
             throw new DataAccessException("error accessing auth Database");

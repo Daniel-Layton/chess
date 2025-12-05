@@ -29,11 +29,14 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig config) {
         this.session = session;
 
-        // Set up message handler for incoming messages
-//        session.addMessageHandler(String.class, msg -> {
-//            ServerMessage serverMessage = gson.fromJson(msg, ServerMessage.class);
-//            handler.handle(serverMessage);
-//        });
+        session.addMessageHandler(String.class, msg -> {
+            try {
+                ServerMessage serverMessage = gson.fromJson(msg, ServerMessage.class);
+                handler.handle(serverMessage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override

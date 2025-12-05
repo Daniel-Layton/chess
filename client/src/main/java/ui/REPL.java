@@ -21,14 +21,11 @@ public class REPL {
         this.server = new ServerFacade(serverUrl);
         this.status = 0;
         this.auth = null;
-        this.ws = new WebSocketFacade(serverUrl, message -> {
-            // Example: just print server messages
-            System.out.println("Received WS message: " + message.serverMessageType);
-        });
+        this.ws = new WebSocketFacade(serverUrl, this::handleServerMessage);
     }
 
     private void handleServerMessage(ServerMessage message) {
-        switch (message.serverMessageType) {
+        switch (message.getServerMessageType()) {
             case LOAD_GAME -> {
                 System.out.println("\n[GAME UPDATE]");
                 System.out.println(new DrawBoard(message.getGame()).draw(false));
@@ -267,13 +264,15 @@ public class REPL {
         int pseudoId = Integer.parseInt(params[0]);
         GameData gameData = gameList.get(pseudoId);
         JoinRequest request = new JoinRequest(auth, joinColor, gameData.gameID());
-        server.join(request);
 
-            if (ws != null) {
-                ws.connect(auth, gameData.gameID());
-            }
+            server.join(new JoinRequest(auth, joinColor, gameData.gameID()));
 
-            return new DrawBoard(gameList.get(Integer.parseInt(params[0])).game()).draw(joinColor != ChessGame.TeamColor.WHITE);
+            list();
+            gameData = gameList.get(pseudoId);
+
+            if (ws != null) ws.connect(auth, gameData.gameID());
+
+            return new DrawBoard(gameData.game()).draw(joinColor != ChessGame.TeamColor.WHITE);
         }
         catch(Exception e) {
             return "Join failed: No Board with ID " + params[0] + " or " + params[1] + " already taken";
@@ -286,24 +285,8 @@ public class REPL {
         }
         try {
             return new DrawBoard(gameList.get(Integer.parseInt(params[0])).game()).draw(false);
-        }
-        catch(Exception e) {
-            return "Observe failed: No Board with that ID";
-        }
-    }
-
-    public String connectToGame(String[] params) {
-        if (params.length != 1) {
-            return "connect failed. Usage: connect <GAME ID>";
-        }
-        try {
-            int pseudoId = Integer.parseInt(params[0]);
-
-            ws.connect(auth, gameList.get(pseudoId).gameID());
-
-            return "Connected to game " + pseudoId;
         } catch (Exception e) {
-            return "Connect failed: " + e.getMessage();
+            return "Observe failed: No Board with that ID";
         }
     }
 }
