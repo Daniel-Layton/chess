@@ -69,12 +69,7 @@ public class WebSocketHandler {
     }
 
     private void sendErrorToSession(WsContext ws, String message) {
-        try {
-            ErrorMessage em = new ErrorMessage(message);
-            ws.send(gson.toJson(em));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        ws.send(gson.toJson(ServerMessage.error(message)));
     }
 
     private void handleUserConnect(WsContext ws, UserGameCommand cmd) {
@@ -93,14 +88,14 @@ public class WebSocketHandler {
 
             connections.add(ws, cmd.getGameID(), username);
 
-            LoadGameMessage load = new LoadGameMessage(gameData);
+            ServerMessage load = ServerMessage.loadGame(gameData.game());
             ws.send(gson.toJson(load));
 
             String playerType = username.equals(gameData.whiteUsername()) ? "white"
                     : username.equals(gameData.blackUsername()) ? "black" : "observer";
 
             String notifText = username + " connected as " + playerType;
-            NotificationMessage notify = new NotificationMessage(notifText);
+            ServerMessage notify = ServerMessage.notification(notifText);
             connections.broadcastToGame(cmd.getGameID(), ws, notify);
 
         } catch (Exception e) {
@@ -135,10 +130,10 @@ public class WebSocketHandler {
 
             String mover = gameService.usernameForToken(cmd.getAuthToken());
 
-            LoadGameMessage load = new LoadGameMessage(updated);
-            connections.broadcastToGame(cmd.getGameID(), null, load);
+            ServerMessage load = ServerMessage.loadGame(gameData.game());
+            ws.send(gson.toJson(load));
 
-            NotificationMessage notify = new NotificationMessage(mover + " made a move");
+            ServerMessage notify = ServerMessage.notification(mover + " made a move");
             connections.broadcastToGame(cmd.getGameID(), ws, notify);
 
         } catch (Exception e) {
@@ -180,7 +175,7 @@ public class WebSocketHandler {
 
             gameService.updateGameData(updated);
 
-            NotificationMessage notify = new NotificationMessage(username + " left the game");
+            ServerMessage notify = ServerMessage.notification(username + " left the game");
             connections.broadcastToGame(cmd.getGameID(), ws, notify);
 
             connections.remove(ws);
@@ -213,8 +208,8 @@ public class WebSocketHandler {
             gameService.resignGame(cmd.getAuthToken(), cmd.getGameID());
 
             String username = gameService.usernameForToken(cmd.getAuthToken());
-            NotificationMessage notify = new NotificationMessage(username + " resigned");
-            connections.broadcastToGame(cmd.getGameID(), null, notify);
+            ServerMessage notify = ServerMessage.notification(username + " resigned");
+            connections.broadcastToGame(cmd.getGameID(), ws, notify);
 
         } catch (Exception e) {
             sendErrorToSession(ws, "Error: " + e.getMessage());

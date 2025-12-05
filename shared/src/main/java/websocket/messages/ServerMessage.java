@@ -3,35 +3,50 @@ package websocket.messages;
 import chess.ChessGame;
 
 public class ServerMessage {
-    public ServerMessageType serverMessageType;
 
-    public ChessGame game;
-    public String errorMessage;
-    public String message;
+    private final ServerMessageType serverMessageType;
+
+    private final ChessGame game;
+    private final String errorMessage;
+    private final String message;
 
     public enum ServerMessageType {
         LOAD_GAME,
         ERROR,
         NOTIFICATION
     }
-
-    public ServerMessage(ServerMessageType type) {
-        this.serverMessageType = type;
+    public static ServerMessage loadGame(ChessGame game) {
+        return new ServerMessage(ServerMessageType.LOAD_GAME, game, null, null);
     }
-
-    public ServerMessage(ServerMessageType type, ChessGame game) {
+    public static ServerMessage error(String errorMessage) {
+        return new ServerMessage(ServerMessageType.ERROR, null, errorMessage, null);
+    }
+    public static ServerMessage notification(String message) {
+        return new ServerMessage(ServerMessageType.NOTIFICATION, null, null, message);
+    }
+    private ServerMessage(ServerMessageType type,
+                          ChessGame game,
+                          String errorMessage,
+                          String message) {
         this.serverMessageType = type;
         this.game = game;
+        this.errorMessage = errorMessage;
+        this.message = message;
     }
 
-    public ServerMessage(ServerMessageType type, String text) {
-        this.serverMessageType = type;
-        if (type == ServerMessageType.ERROR) this.errorMessage = text;
-        if (type == ServerMessageType.NOTIFICATION) this.message = text;
+    public ServerMessageType getServerMessageType() {
+        return serverMessageType;
     }
 
-    public ServerMessageType getServerMessageType() { return this.serverMessageType; }
-    public ChessGame getGame() { return game; }
-    public String getErrorMessage() { return errorMessage; }
-    public String getMessage() { return message; }
+    public ChessGame getGame() {
+        return game;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
