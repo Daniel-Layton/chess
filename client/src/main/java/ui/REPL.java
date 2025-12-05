@@ -15,6 +15,8 @@ public class REPL {
     int status;
     String auth;
     Map<Integer, GameData> gameList = new HashMap<>();
+    int joinedGamePsudoID = 0;
+    int joinedGameRole = 0;
 
 
     public REPL(String serverUrl) throws Exception {
@@ -68,8 +70,11 @@ public class REPL {
         if (this.status == 0) {
             System.out.print("\n" + "[LOGGED_OUT] >>> ");
         }
-        else {
+        else if (this.status == 1) {
             System.out.print("\n" + "[LOGGED_IN] >>> ");
+        }
+        else {
+            System.out.println("\n" + "[IN_GAME] >>> ");
         }
     }
 
@@ -118,6 +123,7 @@ public class REPL {
             return switch (cmd) {
                 case "help" -> help2();
                 case "quit" -> "quit";
+                case "redraw" -> redraw();
                 default -> help2();
             };
         } catch (Exception ex) {
@@ -146,8 +152,13 @@ public class REPL {
 
     public String help2() {
         String l1 = "quit - to exit the program\n";
-        String l2 = "help - to see the help menu\n";
-        return l1 + l2;
+        String l2 = "redraw - to redraw the chessboard\n";
+        String l3 = "quit - to exit the program\n";
+        String l4 = "quit - to exit the program\n";
+        String l5 = "quit - to exit the program\n";
+        String l6 = "quit - to exit the program\n";
+        String l7 = "help - to see the help menu\n";
+        return l1 + l2 + l3 + l4 + l5 + l6 + l7;
     }
 
     public String register(String[] params) {
@@ -272,6 +283,10 @@ public class REPL {
 
             if (ws != null) ws.connect(auth, gameData.gameID());
 
+            status = 2;
+            if (joinColor == ChessGame.TeamColor.WHITE) joinedGameRole = 1;
+            else joinedGameRole = 2;
+            joinedGamePsudoID = pseudoId;
             return new DrawBoard(gameData.game()).draw(joinColor != ChessGame.TeamColor.WHITE);
         }
         catch(Exception e) {
@@ -284,9 +299,16 @@ public class REPL {
             return "observe game failed. Usage: observe <GAME ID>";
         }
         try {
+            joinedGameRole = 3;
+            status = 2;
+            joinedGamePsudoID = Integer.parseInt(params[0]);
             return new DrawBoard(gameList.get(Integer.parseInt(params[0])).game()).draw(false);
         } catch (Exception e) {
             return "Observe failed: No Board with that ID";
         }
+    }
+
+    public String redraw() {
+        return new DrawBoard(gameList.get(joinedGamePsudoID).game()).draw(joinedGameRole == 2);
     }
 }

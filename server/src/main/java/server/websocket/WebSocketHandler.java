@@ -43,6 +43,7 @@ public class WebSocketHandler {
             sendErrorToSession(ws, "Error: malformed command JSON");
             return;
         }
+        if (cmd.getCommandType() == UserGameCommand.CommandType.PING) return;
         if (cmd == null || cmd.getCommandType() == null) {
             sendErrorToSession(ws, "Error: malformed command");
             return;

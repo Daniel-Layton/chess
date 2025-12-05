@@ -11,12 +11,15 @@ public class WebSocketFacade extends Endpoint {
 
     private Session session;
     private final Gson gson = new Gson();
+    private Thread keepAliveThread;
+    private boolean runningKeepAlive = false;
 
     public interface MessageHandler {
         void handle(ServerMessage message);
     }
 
     private final MessageHandler handler;
+
 
     public WebSocketFacade(String url, MessageHandler handler) throws Exception {
         this.handler = handler;
@@ -37,6 +40,8 @@ public class WebSocketFacade extends Endpoint {
                 e.printStackTrace();
             }
         });
+
+        startKeepAlive();
     }
 
     @Override
@@ -47,6 +52,7 @@ public class WebSocketFacade extends Endpoint {
     @Override
     public void onClose(Session session, CloseReason closeReason) {
         System.out.println("WebSocket closed: " + closeReason);
+        stopKeepAlive();
     }
 
     // --------- SEND COMMANDS TO SERVER ---------
@@ -72,5 +78,26 @@ public class WebSocketFacade extends Endpoint {
         } else {
             throw new Exception("WebSocket session is not open");
         }
+    }
+
+    private void startKeepAlive() {
+        runningKeepAlive = true;
+        keepAliveThread = new Thread(() -> {
+            try {
+                while (runningKeepAlive && session != null && session.isOpen()) {
+                    send(new UserGameCommand(UserGameCommand.CommandType.PING, null, null));
+                    Thread.sleep(10000); // send ping every 10 seconds
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        keepAliveThread.setDaemon(true);
+        keepAliveThread.start();
+    }
+
+    private void stopKeepAlive() {
+        runningKeepAlive = false;
+        if (keepAliveThread != null) keepAliveThread.interrupt();
     }
 }
