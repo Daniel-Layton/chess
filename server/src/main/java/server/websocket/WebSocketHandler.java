@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
@@ -171,6 +172,10 @@ public class WebSocketHandler {
                 return;
             }
 
+            // Mark the game as resigned / over
+            gameService.resignGame(cmd.getAuthToken(), cmd.getGameID());
+
+            // Notify all players in the game
             String username = gameService.usernameForToken(cmd.getAuthToken());
             NotificationMessage notify = new NotificationMessage(username + " resigned");
             connections.broadcastToGame(cmd.getGameID(), null, notify);

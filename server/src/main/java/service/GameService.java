@@ -129,4 +129,40 @@ public class GameService {
         updateGameData(updated);
         return updated;
     }
+
+    public void resignGame(String authToken, int gameID) throws Exception {
+        // Get the game
+        GameData gameData = getGameData(Integer.toString(gameID));
+        if (gameData == null) {
+            throw new Exception("Game does not exist");
+        }
+
+        // Get the username of the resigning player
+        String username = usernameForToken(authToken);
+
+        // Determine winner: other player wins
+        ChessGame.TeamColor winnerColor;
+        if (username.equals(gameData.whiteUsername())) {
+            winnerColor = ChessGame.TeamColor.BLACK;
+        } else if (username.equals(gameData.blackUsername())) {
+            winnerColor = ChessGame.TeamColor.WHITE;
+        } else {
+            throw new IllegalStateException("Observer cannot resign the game");
+        }
+
+        // Update the game state
+        ChessGame game = gameData.game();
+        game.setGameOver();
+        game.setWinner(winnerColor);
+
+        // Save updated game
+        GameData updated = new GameData(
+                gameData.gameID(),
+                gameData.whiteUsername(),
+                gameData.blackUsername(),
+                gameData.gameName(),
+                game
+        );
+        updateGameData(updated);
+    }
 }

@@ -16,18 +16,21 @@ public class ChessGame {
     private ChessGame.TeamColor teamTurn;
     private ChessBoard gameBoard;
     private boolean gameOver;
+    private ChessGame.TeamColor winner;
 
     public ChessGame() {
         this.teamTurn = ChessGame.TeamColor.WHITE;
         this.gameBoard = new ChessBoard();
         gameBoard.resetBoard();
         this.gameOver = false;
+        this.winner = null;
     }
 
     public ChessGame(ChessGame.TeamColor Turn, ChessBoard Board) {
         this.teamTurn = Turn;
         this.gameBoard = Board;
         this.gameOver = false;
+        this.winner = null;
     }
 
     @Override
@@ -250,6 +253,14 @@ public class ChessGame {
 
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    public void setWinner(ChessGame.TeamColor winningColor) {
+        winner = winningColor;
+    }
+
+    public ChessGame.TeamColor getWinner() {
+        return winner;
     }
 
     /**
