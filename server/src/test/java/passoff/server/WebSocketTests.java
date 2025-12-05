@@ -44,7 +44,6 @@ public class WebSocketTests {
 
     @BeforeEach
     public void setup() {
-        //populate database with HTTP calls
         serverFacade.clear();
         white = registerUser("white", "WHITE", "white@chess.com");
         black = registerUser("black", "BLACK", "black@chess.com");

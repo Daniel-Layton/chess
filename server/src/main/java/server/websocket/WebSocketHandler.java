@@ -130,8 +130,8 @@ public class WebSocketHandler {
 
             String mover = gameService.usernameForToken(cmd.getAuthToken());
 
-            ServerMessage load = ServerMessage.loadGame(gameData.game());
-            ws.send(gson.toJson(load));
+            ServerMessage load = ServerMessage.loadGame(updated.game());
+            connections.broadcastToGame(cmd.getGameID(), null, load);
 
             ServerMessage notify = ServerMessage.notification(mover + " made a move");
             connections.broadcastToGame(cmd.getGameID(), ws, notify);
