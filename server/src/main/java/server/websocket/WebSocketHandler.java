@@ -209,7 +209,7 @@ public class WebSocketHandler {
 
             String username = gameService.usernameForToken(cmd.getAuthToken());
             ServerMessage notify = ServerMessage.notification(username + " resigned");
-            connections.broadcastToGame(cmd.getGameID(), ws, notify);
+            connections.broadcastToGame(cmd.getGameID(), null, notify);
 
         } catch (Exception e) {
             sendErrorToSession(ws, "Error: " + e.getMessage());
