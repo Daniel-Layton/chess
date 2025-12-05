@@ -65,4 +65,44 @@ public class GameService {
             throw new Exception("bad team color");
         }
     }
+
+    public GameData getGameData(String gameID) throws DataAccessException, SQLException {
+        return GameDB.getGame(gameID);
+    }
+
+    public String usernameForToken(String authToken) throws DataAccessException, SQLException {
+        model.AuthData authQuery = AuthDB.getAuth(authToken);
+        if (authQuery == null || authQuery.username() == null) {
+            throw new DataAccessException("unauthorized");
+        }
+        return authQuery.username();
+    }
+
+    public void updateGameData(GameData gameData) throws SQLException {
+        try {
+            GameDB.updateGame(gameData);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public GameData applyMove(String authToken, Integer gameID, Object move) throws Exception {
+        String username = usernameForToken(authToken);
+        GameData gameData = getGameData(Integer.toString(gameID));
+        if (gameData == null) throw new Exception("Game does not exist");
+
+        // At this point you must:
+        // 1) check that the authenticated username is allowed to move (owner of color whose turn it is)
+        // 2) call your ChessGame to validate and make the move
+        // 3) persist updated GameData via updateGameData
+        //
+        // Example (HIGH-LEVEL, adapt to your API):
+        //
+        // ChessGame cg = g.game();
+        // if (!cg.isTurnOf(username)) throw new Exception("not your turn");
+        // boolean ok = cg.makeMove(move); // returns true if legal and applied
+        // if (!ok) throw new Exception("illegal move");
+        // GameDB.updateGame(g);
+        return gameData;
+    }
 }

@@ -6,6 +6,7 @@ import dataaccess.DataAccessException;
 import io.javalin.*;
 import io.javalin.http.Context;
 
+import server.websocket.WebSocketHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -20,6 +21,8 @@ public class Server {
     GameService gameService = new GameService();
     ClearService clearService = new ClearService();
 
+    WebSocketHandler webSocketHandler = new WebSocketHandler(gameService, userService);
+
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
         // Register your endpoints and exception handlers here.
@@ -30,6 +33,11 @@ public class Server {
         javalin.put("/game", this::JoinHandler);
         javalin.get("/game", this::ListHandler);
         javalin.delete("/db", this::ClearHandler);
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler::handleConnect);
+            ws.onMessage(webSocketHandler::handleMessage);
+            ws.onClose(webSocketHandler::handleClose);
+        });
     }
 
     private void RegisterHandler(Context ctx) {

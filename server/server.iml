@@ -17,5 +17,14 @@
     <orderEntry type="library" name="slf4j.simple" level="project" />
     <orderEntry type="library" name="mysql.connector.j" level="project" />
     <orderEntry type="library" name="mindrot.jbcrypt" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/tyrus-standalone-client-jdk-2.1.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
