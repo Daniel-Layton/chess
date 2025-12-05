@@ -302,7 +302,8 @@ public class REPL {
             joinedGameRole = 3;
             status = 2;
             joinedGamePsudoID = Integer.parseInt(params[0]);
-            return new DrawBoard(gameList.get(Integer.parseInt(params[0])).game()).draw(false);
+            if (ws != null) ws.connect(auth, gameList.get(joinedGamePsudoID).gameID());
+            return new DrawBoard(gameList.get(joinedGamePsudoID).game()).draw(false);
         } catch (Exception e) {
             return "Observe failed: No Board with that ID";
         }
