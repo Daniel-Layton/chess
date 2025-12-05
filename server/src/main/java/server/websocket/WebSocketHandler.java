@@ -172,10 +172,24 @@ public class WebSocketHandler {
                 return;
             }
 
-            // Mark the game as resigned / over
+            GameData gameData = gameService.getGameData(String.valueOf(cmd.getGameID()));
+            if (gameData == null) {
+                sendErrorToSession(ws, "Error: game not found");
+                return;
+            }
+
+            ChessGame game = gameData.game();
+
+            // If game is already over, return ERROR
+            if (game.isGameOver()) {
+                sendErrorToSession(ws, "Error: game is already over");
+                return;
+            }
+
+            // Otherwise, resign the game
             gameService.resignGame(cmd.getAuthToken(), cmd.getGameID());
 
-            // Notify all players in the game
+            // Notify all players
             String username = gameService.usernameForToken(cmd.getAuthToken());
             NotificationMessage notify = new NotificationMessage(username + " resigned");
             connections.broadcastToGame(cmd.getGameID(), null, notify);
