@@ -124,6 +124,7 @@ public class REPL {
                 case "help" -> help2();
                 case "quit" -> "quit";
                 case "redraw" -> redraw();
+                case "leave" -> leave();
                 default -> help2();
             };
         } catch (Exception ex) {
@@ -153,7 +154,7 @@ public class REPL {
     public String help2() {
         String l1 = "quit - to exit the program\n";
         String l2 = "redraw - to redraw the chessboard\n";
-        String l3 = "quit - to exit the program\n";
+        String l3 = "leave - to exit the program\n";
         String l4 = "quit - to exit the program\n";
         String l5 = "quit - to exit the program\n";
         String l6 = "quit - to exit the program\n";
@@ -311,5 +312,13 @@ public class REPL {
 
     public String redraw() {
         return new DrawBoard(gameList.get(joinedGamePsudoID).game()).draw(joinedGameRole == 2);
+    }
+
+    public String leave() throws Exception {
+        if (ws != null) ws.leave(auth, gameList.get(joinedGamePsudoID).gameID());
+        status = 1;
+        joinedGameRole = 0;
+        joinedGamePsudoID = 0;
+        return " ";
     }
 }
