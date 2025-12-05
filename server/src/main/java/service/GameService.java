@@ -131,16 +131,13 @@ public class GameService {
     }
 
     public void resignGame(String authToken, int gameID) throws Exception {
-        // Get the game
         GameData gameData = getGameData(Integer.toString(gameID));
         if (gameData == null) {
             throw new Exception("Game does not exist");
         }
 
-        // Get the username of the resigning player
         String username = usernameForToken(authToken);
 
-        // Determine winner: other player wins
         ChessGame.TeamColor winnerColor;
         if (username.equals(gameData.whiteUsername())) {
             winnerColor = ChessGame.TeamColor.BLACK;
@@ -150,12 +147,10 @@ public class GameService {
             throw new IllegalStateException("Observer cannot resign the game");
         }
 
-        // Update the game state
         ChessGame game = gameData.game();
         game.setGameOver();
         game.setWinner(winnerColor);
 
-        // Save updated game
         GameData updated = new GameData(
                 gameData.gameID(),
                 gameData.whiteUsername(),
