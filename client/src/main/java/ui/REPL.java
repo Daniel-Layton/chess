@@ -6,9 +6,12 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 import ui.models.*;
+import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 public class REPL {
     ServerFacade server;
+    WebSocketFacade ws;
     int status;
     String auth;
     Map<Integer, GameData> gameList = new HashMap<>();
@@ -18,7 +21,21 @@ public class REPL {
         this.server = new ServerFacade(serverUrl);
         this.status = 0;
         this.auth = null;
-        //ws = new WebSocketFacade(serverUrl, this);
+        this.ws = new WebSocketFacade(serverUrl, message -> {
+            // Example: just print server messages
+            System.out.println("Received WS message: " + message.serverMessageType);
+        });
+    }
+
+    private void handleServerMessage(ServerMessage message) {
+        switch (message.serverMessageType) {
+            case LOAD_GAME -> {
+                System.out.println("\n[GAME UPDATE]");
+                System.out.println(new DrawBoard(message.getGame()).draw(false));
+            }
+            case ERROR -> System.out.println("\n[ERROR] " + message.getErrorMessage());
+            case NOTIFICATION -> System.out.println("\n[NOTIFICATION] " + message.getMessage());
+        }
     }
 
     public void run() {
@@ -158,7 +175,7 @@ public class REPL {
             return "Login failed. Usage: login <USERNAME> <PASSWORD>";
         }
         LoginResult result;
-        LoginRequest request = new LoginRequest(params[1], params[0]);
+        LoginRequest request = new LoginRequest(params[0], params[1]);
         try {
             result = server.login(request);
             status = 1;
@@ -247,9 +264,15 @@ public class REPL {
         else {
             return "join game failed. Color value must be 'white' or 'black'";
         }
-        JoinResult result;
-        JoinRequest request = new JoinRequest(auth, joinColor, gameList.get(Integer.parseInt(params[0])).gameID());
-            result = server.join(request);
+        int pseudoId = Integer.parseInt(params[0]);
+        GameData gameData = gameList.get(pseudoId);
+        JoinRequest request = new JoinRequest(auth, joinColor, gameData.gameID());
+        server.join(request);
+
+            if (ws != null) {
+                ws.connect(auth, gameData.gameID());
+            }
+
             return new DrawBoard(gameList.get(Integer.parseInt(params[0])).game()).draw(joinColor != ChessGame.TeamColor.WHITE);
         }
         catch(Exception e) {
@@ -266,6 +289,21 @@ public class REPL {
         }
         catch(Exception e) {
             return "Observe failed: No Board with that ID";
+        }
+    }
+
+    public String connectToGame(String[] params) {
+        if (params.length != 1) {
+            return "connect failed. Usage: connect <GAME ID>";
+        }
+        try {
+            int pseudoId = Integer.parseInt(params[0]);
+
+            ws.connect(auth, gameList.get(pseudoId).gameID());
+
+            return "Connected to game " + pseudoId;
+        } catch (Exception e) {
+            return "Connect failed: " + e.getMessage();
         }
     }
 }

@@ -1,5 +1,6 @@
 package websocket.messages;
 
+import chess.ChessGame;
 import model.GameData;
 
 public class LoadGameMessage extends ServerMessage {
@@ -11,7 +12,7 @@ public class LoadGameMessage extends ServerMessage {
         this.game = game;
     }
 
-    public GameData getGame() {
-        return game;
+    public ChessGame getGame() {
+        return game.game();
     }
 }

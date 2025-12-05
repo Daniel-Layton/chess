@@ -87,9 +87,9 @@ public class GameService {
         }
     }
 
-    public GameData applyMove(String authToken, Integer gameID, ChessMove move) throws Exception {
+    public GameData applyMove(String authToken, String gameID, ChessMove move) throws Exception {
         String username = usernameForToken(authToken);
-        GameData gameData = getGameData(Integer.toString(gameID));
+        GameData gameData = getGameData(gameID);
         if (gameData == null) throw new Exception("Game does not exist");
 
         ChessGame game = gameData.game();
@@ -130,8 +130,8 @@ public class GameService {
         return updated;
     }
 
-    public void resignGame(String authToken, int gameID) throws Exception {
-        GameData gameData = getGameData(Integer.toString(gameID));
+    public void resignGame(String authToken, String gameID) throws Exception {
+        GameData gameData = getGameData(gameID);
         if (gameData == null) {
             throw new Exception("Game does not exist");
         }

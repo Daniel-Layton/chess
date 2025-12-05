@@ -10,11 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
 
     private static class ConnectionInfo {
-        final int gameId;
+        final String gameId;
         final String username;
         final String sessionId;
 
-        ConnectionInfo(int gameId, String username, String sessionId) {
+        ConnectionInfo(String gameId, String username, String sessionId) {
             this.gameId = gameId;
             this.username = username;
             this.sessionId = sessionId;
@@ -25,7 +25,7 @@ public class ConnectionManager {
     private final Map<String, WsContext> sessions = new ConcurrentHashMap<>();
     private final Gson gson = new Gson();
 
-    public void add(WsContext ctx, int gameId, String username) {
+    public void add(WsContext ctx, String gameId, String username) {
         String sid = ctx.sessionId();
         connections.put(sid, new ConnectionInfo(gameId, username, sid));
         sessions.put(sid, ctx);
@@ -46,12 +46,12 @@ public class ConnectionManager {
         return info != null ? info.username : null;
     }
 
-    public void broadcastToGame(int gameId, WsContext exclude, ServerMessage message) {
+    public void broadcastToGame(String gameId, WsContext exclude, ServerMessage message) {
         String json = gson.toJson(message);
         String excludeId = (exclude == null ? null : exclude.sessionId());
 
         connections.forEach((sid, info) -> {
-            if (info.gameId == gameId && !sid.equals(excludeId)) {
+            if (Objects.equals(info.gameId, gameId) && !sid.equals(excludeId)) {
                 WsContext ctx = sessions.get(sid);
                 if (ctx != null) {
                     try {

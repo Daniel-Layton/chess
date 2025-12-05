@@ -41,19 +41,19 @@ public class WebSocketFacade extends Endpoint {
     }
 
     // --------- SEND COMMANDS TO SERVER ---------
-    public void connect(String auth, int gameId) throws Exception {
+    public void connect(String auth, String gameId) throws Exception {
         send(new UserGameCommand(UserGameCommand.CommandType.CONNECT, auth, gameId));
     }
 
-    public void makeMove(String auth, int gameId) throws Exception {
+    public void makeMove(String auth, String gameId) throws Exception {
         send(new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, auth, gameId));
     }
 
-    public void leave(String auth, int gameId) throws Exception {
+    public void leave(String auth, String gameId) throws Exception {
         send(new UserGameCommand(UserGameCommand.CommandType.LEAVE, auth, gameId));
     }
 
-    public void resign(String auth, int gameId) throws Exception {
+    public void resign(String auth, String gameId) throws Exception {
         send(new UserGameCommand(UserGameCommand.CommandType.RESIGN, auth, gameId));
     }
 
