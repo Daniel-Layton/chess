@@ -125,7 +125,7 @@ public class WebSocketHandler {
                 return;
             }
 
-            ChessMove move = new ChessMove(cmd.getMove().getStartPosition(), cmd.getMove().getEndPosition(), null);
+            ChessMove move = new ChessMove(cmd.getMove().getStartPosition(), cmd.getMove().getEndPosition(), cmd.getMove().getPromotionPiece());
 
             GameData updated = gameService.applyMove(cmd.getAuthToken(), cmd.getGameID(), move);
             ChessGame updatedGame = updated.game();

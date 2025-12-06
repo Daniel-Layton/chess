@@ -38,6 +38,7 @@ public class REPL {
             case ERROR -> System.out.println("\n[ERROR] " + message.getErrorMessage());
             case NOTIFICATION -> System.out.println("\n[NOTIFICATION] " + message.getMessage());
         }
+        printPrompt();
     }
 
     public void run() {
@@ -160,7 +161,7 @@ public class REPL {
     public String help2() {
         String l1 = "quit - to exit the program\n";
         String l2 = "redraw - to redraw the chessboard\n";
-        String l3 = "leave - to exit the program\n";
+        String l3 = "leave - to exit the current lobby\n";
         String l4 = "move <b1> <c3> <promotion> - to move\n";
         String l5 = "valid <b1> - to see valid moves for square\n";
         String l6 = "resign - to give up\n";
@@ -317,6 +318,7 @@ public class REPL {
     }
 
     public String redraw() {
+        list();
         return new DrawBoard(gameList.get(joinedGamePsudoID).game()).draw(joinedGameRole == 2);
     }
 
@@ -342,9 +344,8 @@ public class REPL {
         if (params.length == 3) promotionPiece = PromotionParser(params[2]);
         else promotionPiece = null;
         ChessMove move = new ChessMove(start, end, promotionPiece);
+        System.out.println(move);
         if (ws != null) ws.makeMove(auth, gameList.get(joinedGamePsudoID).gameID(), move);
-        System.out.println(joinedGamePsudoID);
-        System.out.println(gameList.get(joinedGamePsudoID));
         return " ";
     }
 
@@ -372,6 +373,7 @@ public class REPL {
         if (params.length != 1) {
             return "valid check failed. Usage: valid <b1>";
         }
+        list();
         ChessPosition start = new ChessPosition(params[0].charAt(1)-48, rowLetterParser(params[0].charAt(0)));
         new DrawValid(gameList.get(joinedGamePsudoID).game(), start).draw(joinedGameRole == 2);
         return " ";
