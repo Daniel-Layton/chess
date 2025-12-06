@@ -154,6 +154,10 @@ public class GameService {
             throw new IllegalStateException("Observer cannot resign the game");
         }
 
+        if (gameData.game().isGameOver()) {
+            throw new IllegalStateException("Game is already over");
+        }
+
         // Update the game state
         ChessGame game = gameData.game();
         game.setGameOver();

@@ -344,7 +344,6 @@ public class REPL {
         if (params.length == 3) promotionPiece = PromotionParser(params[2]);
         else promotionPiece = null;
         ChessMove move = new ChessMove(start, end, promotionPiece);
-        System.out.println(move);
         if (ws != null) ws.makeMove(auth, gameList.get(joinedGamePsudoID).gameID(), move);
         return " ";
     }
