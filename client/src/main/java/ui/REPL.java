@@ -33,7 +33,7 @@ public class REPL {
         switch (message.getServerMessageType()) {
             case LOAD_GAME -> {
                 System.out.println("\n[GAME UPDATE]");
-                System.out.println(new DrawBoard(message.getGame()).draw(false));
+                System.out.println(new DrawBoard(message.getGame()).draw(joinedGameRole==2));
             }
             case ERROR -> System.out.println("\n[ERROR] " + message.getErrorMessage());
             case NOTIFICATION -> System.out.println("\n[NOTIFICATION] " + message.getMessage());
@@ -77,7 +77,7 @@ public class REPL {
             System.out.print("\n" + "[LOGGED_IN] >>> ");
         }
         else {
-            System.out.println("\n" + "[IN_GAME] >>> ");
+            System.out.print("\n" + "[IN_GAME] >>> ");
         }
     }
 
@@ -129,6 +129,7 @@ public class REPL {
                 case "redraw" -> redraw();
                 case "leave" -> leave();
                 case "move" -> move(params);
+                case "valid" -> valid(params);
                 default -> help2();
             };
         } catch (Exception ex) {
@@ -160,7 +161,7 @@ public class REPL {
         String l2 = "redraw - to redraw the chessboard\n";
         String l3 = "leave - to exit the program\n";
         String l4 = "move <b1> <c3> <promotion> - to exit the program\n";
-        String l5 = "quit - to exit the program\n";
+        String l5 = "valid <b1> - to see valid moves for square\n";
         String l6 = "quit - to exit the program\n";
         String l7 = "help - to see the help menu\n";
         return l1 + l2 + l3 + l4 + l5 + l6 + l7;
@@ -362,5 +363,13 @@ public class REPL {
         if (Objects.equals(piece, "bishop")) return ChessPiece.PieceType.BISHOP;
         if (Objects.equals(piece, "queen")) return ChessPiece.PieceType.QUEEN;
         return null;
+    }
+
+    public String valid(String[] params) throws Exception {
+        if (params.length != 1) {
+            return "valid check failed. Usage: valid <b1>";
+        }
+        ChessPosition start = new ChessPosition(params[0].charAt(1)-48, rowLetterParser(params[0].charAt(0)));
+        return new DrawValid(gameList.get(joinedGamePsudoID).game(), start).draw(joinedGameRole == 2);
     }
 }
