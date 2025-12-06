@@ -15,6 +15,8 @@ import service.models.RegisterRequest;
 import websocket.commands.UserGameCommand;
 import websocket.messages.*;
 
+import java.sql.SQLOutput;
+
 public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
@@ -117,8 +119,6 @@ public class WebSocketHandler {
                 return;
             }
 
-//            var serializer = new Gson();
-//            GameCommand gameCommand = serializer.fromJson(rawJson, GameCommand.class)
 
             if (cmd.getMove() == null || cmd.getMove().getStartPosition() == null || cmd.getMove().getEndPosition() == null) {
                 sendErrorToSession(ws, "Error: missing move positions");
@@ -200,6 +200,9 @@ public class WebSocketHandler {
                     gameData.game()
             );
 
+            System.out.println(gameData);
+            System.out.println("");
+            System.out.println(updated);
             gameService.updateGameData(updated);
 
             ServerMessage notify = ServerMessage.notification(username + " left the game");
@@ -232,11 +235,36 @@ public class WebSocketHandler {
                 return;
             }
 
+            String username = gameService.usernameForToken(cmd.getAuthToken());
+
+            boolean isWhite = username.equals(gameData.whiteUsername());
+            boolean isBlack = username.equals(gameData.blackUsername());
+
+            if (!isWhite && !isBlack) {
+                sendErrorToSession(ws,
+                        "Error: observers cannot resign");
+                return;
+            }
+
             gameService.resignGame(cmd.getAuthToken(), cmd.getGameID());
 
-            String username = gameService.usernameForToken(cmd.getAuthToken());
-            ServerMessage notify = ServerMessage.notification(username + " resigned");
-            connections.broadcastToGame(cmd.getGameID(), null, notify);
+            String winner = isWhite ? gameData.blackUsername() : gameData.whiteUsername();
+            String loseColor = isWhite ? "White" : "Black";
+            String winColor  = isWhite ? "Black" : "White";
+
+            connections.broadcastToGame(
+                    cmd.getGameID(),
+                    null,
+                    ServerMessage.loadGame(game)
+            );
+
+            connections.broadcastToGame(
+                    cmd.getGameID(),
+                    null,
+                    ServerMessage.notification(
+                            username + " resigned. " + winColor + " (" + winner + ") wins!"
+                    )
+            );
 
         } catch (Exception e) {
             sendErrorToSession(ws, "Error: " + e.getMessage());

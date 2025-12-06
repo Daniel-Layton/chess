@@ -130,6 +130,7 @@ public class REPL {
                 case "leave" -> leave();
                 case "move" -> move(params);
                 case "valid" -> valid(params);
+                case "resign" -> resign();
                 default -> help2();
             };
         } catch (Exception ex) {
@@ -160,9 +161,9 @@ public class REPL {
         String l1 = "quit - to exit the program\n";
         String l2 = "redraw - to redraw the chessboard\n";
         String l3 = "leave - to exit the program\n";
-        String l4 = "move <b1> <c3> <promotion> - to exit the program\n";
+        String l4 = "move <b1> <c3> <promotion> - to move\n";
         String l5 = "valid <b1> - to see valid moves for square\n";
-        String l6 = "quit - to exit the program\n";
+        String l6 = "resign - to give up\n";
         String l7 = "help - to see the help menu\n";
         return l1 + l2 + l3 + l4 + l5 + l6 + l7;
     }
@@ -342,7 +343,9 @@ public class REPL {
         else promotionPiece = null;
         ChessMove move = new ChessMove(start, end, promotionPiece);
         if (ws != null) ws.makeMove(auth, gameList.get(joinedGamePsudoID).gameID(), move);
-        return new DrawBoard(gameList.get(joinedGamePsudoID).game()).draw(joinedGameRole == 2);
+        System.out.println(joinedGamePsudoID);
+        System.out.println(gameList.get(joinedGamePsudoID));
+        return " ";
     }
 
     private int rowLetterParser(char letter) {
@@ -370,6 +373,12 @@ public class REPL {
             return "valid check failed. Usage: valid <b1>";
         }
         ChessPosition start = new ChessPosition(params[0].charAt(1)-48, rowLetterParser(params[0].charAt(0)));
-        return new DrawValid(gameList.get(joinedGamePsudoID).game(), start).draw(joinedGameRole == 2);
+        new DrawValid(gameList.get(joinedGamePsudoID).game(), start).draw(joinedGameRole == 2);
+        return " ";
+    }
+
+    public String resign() throws Exception {
+        if (ws != null) ws.resign(auth, gameList.get(joinedGamePsudoID).gameID());
+        return " ";
     }
 }
