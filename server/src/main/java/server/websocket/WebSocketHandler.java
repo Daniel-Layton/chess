@@ -51,7 +51,7 @@ public class WebSocketHandler {
 
         switch (cmd.getCommandType()) {
             case CONNECT -> handleUserConnect(ws, cmd);
-            case MAKE_MOVE -> handleMakeMove(ws, cmd, json);
+            case MAKE_MOVE -> handleMakeMove(ws, cmd);
             case LEAVE -> handleLeave(ws, cmd);
             case RESIGN -> handleResign(ws, cmd);
             default -> sendErrorToSession(ws, "Error: unknown command type");
@@ -104,7 +104,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void handleMakeMove(WsContext ws, UserGameCommand cmd, String rawJson) {
+    private void handleMakeMove(WsContext ws, UserGameCommand cmd) {
         if (cmd.getAuthToken() == null || cmd.getGameID() == null) {
             sendErrorToSession(ws, "Error: missing authToken or gameID");
             return;
@@ -117,18 +117,18 @@ public class WebSocketHandler {
                 return;
             }
 
-            var serializer = new Gson();
-            GameCommand gameCommand = serializer.fromJson(rawJson, GameCommand.class);
+//            var serializer = new Gson();
+//            GameCommand gameCommand = serializer.fromJson(rawJson, GameCommand.class)
 
-            if (gameCommand.getMove() == null || gameCommand.getMove().getStartPosition() == null || gameCommand.getMove().getEndPosition() == null) {
+            if (cmd.getMove() == null || cmd.getMove().getStartPosition() == null || cmd.getMove().getEndPosition() == null) {
                 sendErrorToSession(ws, "Error: missing move positions");
                 return;
             }
 
-            ChessMove move = new ChessMove(gameCommand.getMove().getStartPosition(), gameCommand.getMove().getEndPosition(), null);
+            ChessMove move = new ChessMove(cmd.getMove().getStartPosition(), cmd.getMove().getEndPosition(), null);
 
             GameData updated = gameService.applyMove(cmd.getAuthToken(), cmd.getGameID(), move);
-
+            ChessGame updatedGame = updated.game();
             String mover = gameService.usernameForToken(cmd.getAuthToken());
 
             ServerMessage load = ServerMessage.loadGame(updated.game());
@@ -136,6 +136,32 @@ public class WebSocketHandler {
 
             ServerMessage notify = ServerMessage.notification(mover + " made a move");
             connections.broadcastToGame(cmd.getGameID(), ws, notify);
+
+            ChessGame.TeamColor nextTurn = updatedGame.getTeamTurn();
+
+            boolean inCheck = updatedGame.isInCheck(nextTurn);
+            boolean inCheckmate = updatedGame.isInCheckmate(nextTurn);
+            boolean inStalemate = updatedGame.isInStalemate(nextTurn);
+
+            if (inCheckmate) {
+                connections.broadcastToGame(
+                        cmd.getGameID(),
+                        null,
+                        ServerMessage.notification("Checkmate! " + mover + " wins.")
+                );
+            } else if (inStalemate) {
+                connections.broadcastToGame(
+                        cmd.getGameID(),
+                        null,
+                        ServerMessage.notification("Stalemate! Game ends in a draw.")
+                );
+            } else if (inCheck) {
+                connections.broadcastToGame(
+                        cmd.getGameID(),
+                        null,
+                        ServerMessage.notification("Check against " + nextTurn)
+                );
+            }
 
         } catch (Exception e) {
             sendErrorToSession(ws, "Error: " + e.getMessage());

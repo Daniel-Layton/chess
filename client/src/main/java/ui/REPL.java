@@ -3,6 +3,9 @@ package ui;
 import java.util.*;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.GameData;
 import ui.models.*;
@@ -125,6 +128,7 @@ public class REPL {
                 case "quit" -> "quit";
                 case "redraw" -> redraw();
                 case "leave" -> leave();
+                case "move" -> move(params);
                 default -> help2();
             };
         } catch (Exception ex) {
@@ -155,7 +159,7 @@ public class REPL {
         String l1 = "quit - to exit the program\n";
         String l2 = "redraw - to redraw the chessboard\n";
         String l3 = "leave - to exit the program\n";
-        String l4 = "quit - to exit the program\n";
+        String l4 = "move <b1> <c3> <promotion> - to exit the program\n";
         String l5 = "quit - to exit the program\n";
         String l6 = "quit - to exit the program\n";
         String l7 = "help - to see the help menu\n";
@@ -320,5 +324,43 @@ public class REPL {
         joinedGameRole = 0;
         joinedGamePsudoID = 0;
         return " ";
+    }
+
+    public String move(String[] params) throws Exception {
+        if (params.length != 2 && params.length != 3) {
+            return "move piece failed. Usage: move <b1> <c3> <promotion>";
+        }
+
+        // e2 e4 -> params[0] params[1]
+
+        ChessPosition start = new ChessPosition(params[0].charAt(1)-48, rowLetterParser(params[0].charAt(0)));
+        ChessPosition end = new ChessPosition(params[1].charAt(1)-48, rowLetterParser(params[1].charAt(0)));
+
+        ChessPiece.PieceType promotionPiece;
+        if (params.length == 3) promotionPiece = PromotionParser(params[2]);
+        else promotionPiece = null;
+        ChessMove move = new ChessMove(start, end, promotionPiece);
+        if (ws != null) ws.makeMove(auth, gameList.get(joinedGamePsudoID).gameID(), move);
+        return new DrawBoard(gameList.get(joinedGamePsudoID).game()).draw(joinedGameRole == 2);
+    }
+
+    private int rowLetterParser(char letter) {
+        if (letter == 'a') return 1;
+        if (letter == 'b') return 2;
+        if (letter == 'c') return 3;
+        if (letter == 'd') return 4;
+        if (letter == 'e') return 5;
+        if (letter == 'f') return 6;
+        if (letter == 'g') return 7;
+        if (letter == 'h') return 8;
+        return 0;
+    }
+
+    private ChessPiece.PieceType PromotionParser(String piece) {
+        if (Objects.equals(piece, "rook")) return ChessPiece.PieceType.ROOK;
+        if (Objects.equals(piece, "knight")) return ChessPiece.PieceType.KNIGHT;
+        if (Objects.equals(piece, "bishop")) return ChessPiece.PieceType.BISHOP;
+        if (Objects.equals(piece, "queen")) return ChessPiece.PieceType.QUEEN;
+        return null;
     }
 }

@@ -94,6 +94,8 @@ public class GameService {
 
         ChessGame game = gameData.game();
 
+        System.out.println("game data for apply move -> " + game);
+
         if (game.isGameOver()) {
             throw new IllegalStateException("Game is already over");
         }
@@ -113,6 +115,8 @@ public class GameService {
 
         var legalMoves = game.validMoves(move.getStartPosition());
         if (legalMoves == null || !legalMoves.contains(move)) {
+            System.out.println(move);
+            System.out.println(legalMoves);
             throw new IllegalStateException("Invalid move");
         }
 

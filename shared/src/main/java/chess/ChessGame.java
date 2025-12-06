@@ -79,6 +79,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if (gameBoard.getPiece(startPosition) == null) {
+            System.out.println("no chess pieces here!");
             return null;
         }
         ChessPiece pieceToCheck = gameBoard.getPiece(startPosition);
@@ -99,6 +100,7 @@ public class ChessGame {
                 possibleMoves.add(potentialMove);
             }
         }
+        System.out.println("valid move count: " + possibleMoves.size());
         return possibleMoves;
     }
 
@@ -140,7 +142,11 @@ public class ChessGame {
             if (teamTurn == TeamColor.WHITE) teamTurn = TeamColor.BLACK;
             else teamTurn = TeamColor.WHITE;
         }
-        else throw new InvalidMoveException("Invalid Move");
+        else {
+            System.out.println("START = " + start);
+            System.out.println("END = " + end);
+            throw new InvalidMoveException("Invalid Move: START = " + start + "END = " + end);
+        }
     }
 
     public void testMove(ChessMove move) {
