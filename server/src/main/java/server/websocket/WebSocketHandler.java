@@ -255,12 +255,6 @@ public class WebSocketHandler {
             connections.broadcastToGame(
                     cmd.getGameID(),
                     null,
-                    ServerMessage.loadGame(game)
-            );
-
-            connections.broadcastToGame(
-                    cmd.getGameID(),
-                    null,
                     ServerMessage.notification(
                             username + " resigned. " + winColor + " (" + winner + ") wins!"
                     )
