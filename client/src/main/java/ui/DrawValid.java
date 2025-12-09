@@ -28,8 +28,11 @@ public class DrawValid {
     public DrawValid(ChessGame state, ChessPosition start) {
         this.game = state;
         this.validSquares = new HashSet<>();
-        for (ChessMove chessMove : state.validMoves(start)) {
-            validSquares.add(chessMove.getEndPosition());
+
+        if (state.getBoard().getPiece(start) != null) {
+            for (ChessMove chessMove : state.validMoves(start)) {
+                validSquares.add(chessMove.getEndPosition());
+            }
         }
     }
 

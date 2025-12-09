@@ -16,6 +16,7 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.*;
 
 import java.sql.SQLOutput;
+import java.util.Objects;
 
 public class WebSocketHandler {
 
@@ -134,7 +135,12 @@ public class WebSocketHandler {
             ServerMessage load = ServerMessage.loadGame(updated.game());
             connections.broadcastToGame(cmd.getGameID(), null, load);
 
-            ServerMessage notify = ServerMessage.notification(mover + " made a move");
+            ServerMessage notify = ServerMessage.notification(mover + " moved from " +
+                    rowLetterUnparser(move.getStartPosition().getColumn()) +
+                    move.getStartPosition().getRow() +
+                    " to " +
+                    rowLetterUnparser(move.getEndPosition().getColumn()) +
+                    move.getEndPosition().getRow());
             connections.broadcastToGame(cmd.getGameID(), ws, notify);
 
             ChessGame.TeamColor nextTurn = updatedGame.getTeamTurn();
@@ -156,11 +162,19 @@ public class WebSocketHandler {
                         ServerMessage.notification("Stalemate! Game ends in a draw.")
                 );
             } else if (inCheck) {
-                connections.broadcastToGame(
-                        cmd.getGameID(),
-                        null,
-                        ServerMessage.notification("Check against " + nextTurn)
-                );
+                if (Objects.equals(mover, updated.whiteUsername()))
+                    connections.broadcastToGame(
+                            cmd.getGameID(),
+                            null,
+                            ServerMessage.notification(updated.blackUsername() + " is in Check")
+                    );
+                else {
+                    connections.broadcastToGame(
+                            cmd.getGameID(),
+                            null,
+                            ServerMessage.notification(updated.whiteUsername() + " is in Check")
+                    );
+                }
             }
 
         } catch (Exception e) {
@@ -263,5 +277,17 @@ public class WebSocketHandler {
         } catch (Exception e) {
             sendErrorToSession(ws, "Error: " + e.getMessage());
         }
+    }
+
+    private String rowLetterUnparser(int rowNum) {
+        if (rowNum == 1) return "a";
+        if (rowNum == 2) return "b";
+        if (rowNum == 3) return "c";
+        if (rowNum == 4) return "d";
+        if (rowNum == 5) return "e";
+        if (rowNum == 6) return "f";
+        if (rowNum == 7) return "g";
+        if (rowNum == 8) return "h";
+        return "z";
     }
 }

@@ -60,6 +60,14 @@ public class REPL {
                 }
                 else {
                     result = eval2(line);
+                    if (Objects.equals(result, "resign")) {
+                        System.out.println("Are you sure you want to resign? ('yes/no')");
+                        String conf = scanner.nextLine();
+                        if (Objects.equals(conf, "yes")) {
+                            result = resign();
+                        }
+                        else result = " ";
+                    }
                     System.out.print(result);
                 }
             } catch (Throwable e) {
@@ -131,7 +139,7 @@ public class REPL {
                 case "leave" -> leave();
                 case "move" -> move(params);
                 case "valid" -> valid(params);
-                case "resign" -> resign();
+                case "resign" -> "resign";
                 default -> help2();
             };
         } catch (Exception ex) {
@@ -335,6 +343,19 @@ public class REPL {
             return "move piece failed. Usage: move <b1> <c3> <promotion>";
         }
 
+        if (!isColInRange(params[0].charAt(0))) {
+            return "move piece failed. Usage: move <b1> <c3> <promotion>";
+        }
+        if (!isRowInRange(params[0].charAt(1))) {
+            return "move piece failed. Usage: move <b1> <c3> <promotion>";
+        }
+        if (!isColInRange(params[1].charAt(0))) {
+            return "move piece failed. Usage: move <b1> <c3> <promotion>";
+        }
+        if (!isRowInRange(params[1].charAt(1))) {
+            return "move piece failed. Usage: move <b1> <c3> <promotion>";
+        }
+
         // e2 e4 -> params[0] params[1]
 
         ChessPosition start = new ChessPosition(params[0].charAt(1)-48, rowLetterParser(params[0].charAt(0)));
@@ -358,6 +379,30 @@ public class REPL {
         if (letter == 'g') return 7;
         if (letter == 'h') return 8;
         return 0;
+    }
+
+    private boolean isRowInRange(char number) {
+        if (number == '1') return true;
+        if (number == '2') return true;
+        if (number == '3') return true;
+        if (number == '4') return true;
+        if (number == '5') return true;
+        if (number == '6') return true;
+        if (number == '7') return true;
+        if (number == '8') return true;
+        return false;
+    }
+
+    private boolean isColInRange(char letter) {
+        if (letter == 'a') return true;
+        if (letter == 'b') return true;
+        if (letter == 'c') return true;
+        if (letter == 'd') return true;
+        if (letter == 'e') return true;
+        if (letter == 'f') return true;
+        if (letter == 'g') return true;
+        if (letter == 'h') return true;
+        return false;
     }
 
     private ChessPiece.PieceType PromotionParser(String piece) {
